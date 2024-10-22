@@ -21,8 +21,8 @@ function App() {
   );
   App.get('/cardapio', (req, res) => {
     const cardapio = [
-        { id: 1, nome: 'Pizza Margherita', preco: 35.00 },
-        { id: 2, nome: 'Hambúrguer de Frango', preco: 22.00 },
+        { id: 1, nome: 'Pizza', preco: 35.00},
+        { id: 2, nome: 'Hambúrguer', preco: 22.00},
     ];
     res.json(cardapio);
 });
