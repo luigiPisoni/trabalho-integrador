@@ -9,7 +9,7 @@ function Header() {
     setIsLogged(!isLogged);
   };
   return (
-    <header className="py-7 px-24 sticky flex w-full top-0 z-50 items-center gap-5">
+    <header className="py-7 px-24 sticky flex w-full top-0 z-50 items-center gap-12">
       {/* Container da logo e título */}
       <div className="flex">
         <Wheat color="#426B1F" strokeWidth={"1.75px"} />
