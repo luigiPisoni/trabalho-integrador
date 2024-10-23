@@ -34,3 +34,19 @@ server.get('/pratos', (req, res) =>{
   res.json(pratos)
 });
 
+server.post('/novo-pedido', (req, res) =>{
+  var pedido = req.body;
+
+    if (parseInt(pedido.quantidade) < 1 || parseInt(pedido.quantidade) > 10 || !pedido.quantidade || parseInt(pedido.id) < 0) {
+      res.status(400).send('Pedido invalido!');
+      
+    }else{
+      res.send('Pedido criado!');
+    }
+});  
+server.get('/pedidos', (req, res) => {
+    const pedido = [{nome:'prato feito',quantidade:'2', id:'001'}];
+    res.json(pedido);
+});
+
+
