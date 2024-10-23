@@ -11,6 +11,7 @@ server.listen(port, () => {
   console.log("Server iniciado no port " + port);
 });
 
+//Rotas dos pratos abaixo
 server.post("/novo-prato", (req, res) => {
   console.log("tá chegando");
 
@@ -34,6 +35,7 @@ server.get('/pratos', (req, res) =>{
   res.json(pratos)
 });
 
+//Rotas dos pedidos abaixo
 server.post('/novo-pedido', (req, res) =>{
   var pedido = req.body;
 
@@ -44,9 +46,31 @@ server.post('/novo-pedido', (req, res) =>{
       res.send('Pedido criado!');
     }
 });  
+
 server.get('/pedidos', (req, res) => {
     const pedido = [{nome:'prato feito',quantidade:'2', id:'001'}];
     res.json(pedido);
 });
 
+//Rotas dos produtos abaixo
+server.post("/novo-produto", (req, res) => {
+  console.log("tá chegando");
 
+  var produto = req.body;
+
+  if (
+    produto.nome.length < 3 ||
+    parseFloat(produto.preco) <= 0 ||
+    produto.tamanho.length < 2
+  ) {
+    res.status(400).send("Produto inválido!!!");
+  } else {
+    res.send("Produto cadastrado!!!");
+  }
+  res.send();
+});
+
+server.get('/produtos', (req, res) =>{
+  const produtos = [{nome: 'Coca-cola', preco: '5,00', tamanho: '1L'}];
+  res.json(produtos)
+});
