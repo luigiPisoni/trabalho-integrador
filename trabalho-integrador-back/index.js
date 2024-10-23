@@ -29,3 +29,8 @@ server.post("/novo-prato", (req, res) => {
 
   res.send();
 });
+server.get('/pratos', (req, res) =>{
+  const pratos = [{nome: 'chuchu ao molho branco', preco: '7,75', ingredientes: [{quantidade:'1', nome: 'chuchu'},{quantidade:'1', nome:'molho branco' }]}];
+  res.json(pratos)
+});
+
