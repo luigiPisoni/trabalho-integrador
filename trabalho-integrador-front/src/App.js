@@ -2,21 +2,19 @@ import "./App.css";
 import "./output.css";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import Header from "./components/Header";
-// import Home from "./views/Home";
+import Featured from "./views/Featured";
 
 function App() {
   return (
     <div className="App">
       <Header />
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <Routes>
-          <Route index element={<Home />} />
-          
+          <Route index element={<Featured />} />
+          {/* <Route path="" element={<Home />} /> */}
         </Routes>
-      </BrowserRouter> */
-      }
-      
-    </div> 
+      </BrowserRouter>
+    </div>
   );
 }
 export default App;
