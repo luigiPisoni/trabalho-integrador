@@ -1,6 +1,9 @@
-function Card({ nome, preco, ingredientes }) {
+function Card({ nome, preco, ingredientes, onClick }) {
   return (
-    <div className="border-2 rounded-xl overflow-hidden hover:cursor-pointer hover:opacity-80 transition-opacity">
+    <div
+      className="border-2 rounded-xl overflow-hidden hover:cursor-pointer hover:opacity-80 transition-opacity"
+      onClick={onClick}
+    >
       <div className="bg-cyan-100">
         <img
           className="aspect-[4/3] object-cover"

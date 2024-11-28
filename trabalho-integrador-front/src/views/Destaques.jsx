@@ -1,7 +1,7 @@
 import PageHeader from "../components/PageHeader";
 import Card from "../components/Card";
 
-function Home() {
+function Destaques() {
   const pratosDestaques = [
     {
       nome: "Prato em Destaque Lala",
@@ -35,8 +35,8 @@ function Home() {
   ];
   return (
     <>
-      <PageHeader />
-      <div className="px-8 md:px-24 py-8 ">
+      <PageHeader titulo={"Pratos em destaque"} />
+      <div className="px-8 md:px-24 py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {pratosDestaques.map((prato) => {
             return (
@@ -44,6 +44,9 @@ function Home() {
                 nome={prato.nome}
                 preco={prato.preco}
                 ingredientes={prato.ingredientes}
+                onClick={() => {
+                  window.location.href = "/novo-pedido";
+                }}
               />
             );
           })}
@@ -53,4 +56,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Destaques;
