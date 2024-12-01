@@ -1,22 +1,27 @@
 import { useState } from "react";
 
-function ListCard({ nome, preco, ingredientes, adicionarPrato }) {
+function ListCard({ nome, preco, ingredientes, adicionaCarrinho }) {
   const [qnt, setQnt] = useState(1);
 
   const handleQnt = (e) => {
     setQnt(e.target.value > 0 ? e.target.value : 1);
-    console.log(qnt);
   };
   return (
-    <div className="grid grid-cols-7 border-2 rounded-xl overflow-hidden">
+    <div className="grid grid-cols-5 border-2 rounded-3xl overflow-hidden">
       <div className="bg-cyan-100">
-        <img className=" object-cover" src="/images/placeholder.png" alt="" />
+        <img
+          className="aspect-square object-cover"
+          src="/images/placeholder.png"
+          alt=""
+        />
       </div>
-      <div className="col-span-5 px-4 py-2">
+      <div className="col-span-3 px-6 py-4">
         <p className="font-bold">{nome}</p>
-        <p className="font-semibold text-default-green truncate">
-          {ingredientes}
-        </p>
+        {ingredientes && (
+          <p className="font-semibold text-default-green truncate">
+            {ingredientes}
+          </p>
+        )}
         <div>
           <input
             value={qnt}
@@ -25,15 +30,15 @@ function ListCard({ nome, preco, ingredientes, adicionarPrato }) {
             onChange={handleQnt}
           />
           <button
-            className="ml-2 bg-default-green text-white px-2 rounded-2xl "
-            // onClick={() => adicionarPrato(nome, preco, qnt)}
+            className="ml-2 bg-default-green text-white px-2 rounded-2xl"
+            onClick={() => adicionaCarrinho({ nome, preco, qnt })}
           >
-            +
+            Adicionar
           </button>
         </div>
       </div>
-      <div className="px-4 py-2">
-        <p className="font-bold">R$ {preco}</p>
+      <div className="px-6 py-4 text-right">
+        <p className="font-bold text-xl">R$ {preco.toFixed(2)}</p>
       </div>
     </div>
   );
