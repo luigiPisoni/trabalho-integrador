@@ -1,9 +1,11 @@
 import express from "express";
+import * as dotenv from 'dotenv';//
+dotenv.config();//
 
-const pratoRoute = require("./routes/prato");
-const pedidoRoute = require("./routes/pedido");
-const funcionarioRoute = require("./routes/funcionario");
-const produtoRoute = require("./routes/produto");
+import pratoRoute from "./routes/prato.js";
+import pedidoRoute from "./routes/pedido.js";
+import funcionarioRoute from "./routes/funcionario.js";
+import produtoRoute from "./routes/produto.js";
 
 const server = express();
 
