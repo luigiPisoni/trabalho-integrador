@@ -16,11 +16,19 @@ Luigi Eduardo Pisoni: 2311100009
 
 Wictor Henrique Greselli: 2311100060
 
-## Para iniciar o front-end localmente:
+## Instalando yarn
+
+Para instalar o gerenciador de pacotes:
+
+### `npm install --global yarn`
+
+## Para iniciar o projeto localmente:
+
+Tanto o front quanto o back usam o yarn, então os comandos são os mesmos para os dois.
 
 Para instalar os pacotes necessários:
 
-### `yarn install`
+### `yarn`
 
 Para iniciar o projeto:
 
