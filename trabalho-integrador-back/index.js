@@ -1,9 +1,9 @@
 import express from "express";
 
-const pratoRoute = require("./routes/prato");
-const pedidoRoute = require("./routes/pedido");
-const funcionarioRoute = require("./routes/funcionario");
-const produtoRoute = require("./routes/produto");
+import pratoRoute from "./routes/prato.js";
+// import pedidoRoute from "./routes/pedido.js";
+// import funcionarioRoute from "./routes/funcionario.js";
+// import produtoRoute from "./routes/produto.js";
 
 const server = express();
 
@@ -17,6 +17,6 @@ server.listen(port, () => {
 });
 
 server.use("/prato", pratoRoute);
-server.use("/pedido", pedidoRoute);
-server.use("/funcionario", funcionarioRoute);
-server.use("/produto", produtoRoute);
+// server.use("/pedido", pedidoRoute);
+// server.use("/funcionario", funcionarioRoute);
+// server.use("/produto", produtoRoute);

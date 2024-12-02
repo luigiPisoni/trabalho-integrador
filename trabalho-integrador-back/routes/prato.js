@@ -1,40 +1,33 @@
 import express from "express";
+import { supabase } from "../db/banco.js";
 
-const router = express.Router();
+const pratoRouter = express.Router();
 
-// lista placeholder só pra retornar alguma coisa
-const pratos = [
-  {
-    id: "01",
-    nome: "chuchu ao molho branco",
-    preco: "7,75",
-    ingredientes: [
-      { quantidade: "4", nome: "chuchu" },
-      { quantidade: "1", nome: "molho branco" },
-    ],
-  },
-];
+pratoRouter.get("/lista", async (req, res) => {
+  try {
+    const { data, erro } = await supabase.from("prato").select("*");
+    if (erro) throw erro;
 
-router.get("/listagem", (req, res) => {
-  res.json(pratos);
+    // console.log(data);
+    res.json(data);
+  } catch (erro) {
+    console.log("erro: ", erro);
+    res.status(400).json({ erro: "Erro ao listar os pratos" });
+  }
 });
 
-router.post("/cadastro", (req, res) => {
+pratoRouter.post("/novo", (req, res) => {
   var prato = req.body;
 
-  if (
-    prato.nome.length < 3 ||
-    parseFloat(prato.preco) <= 0 ||
-    prato.ingredientes.length < 1
-  ) {
-    res.status(400).json({ erro: "Prato inválido!!!" });
+  if (prato.nome.length < 3 || parseFloat(prato.preco) <= 0) {
+    res.status(400).json({ erro: "Prato inválido" });
   } else {
     // res.send("Prato cadastrado!!!");
     res.json(prato);
   }
 });
 
-// router.put("/:id", (req, res) => {
+// pratoRouter.put("/:id", (req, res) => {
 //   const id = parseInt(req.params.id); // pega o id
 //   const pratoAtualizado = req.body; // pega o novo prato
 
@@ -71,3 +64,5 @@ router.post("/cadastro", (req, res) => {
 //     res.status(404).send("Prato não encontrado!");
 //   }
 // });
+
+export default pratoRouter;
