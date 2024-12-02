@@ -71,3 +71,5 @@ router.post("/cadastro", (req, res) => {
 //     res.status(404).send("Prato não encontrado!");
 //   }
 // });
+
+export default router;

@@ -24,3 +24,5 @@ router.post("/cadastro", (req, res) => {
     res.json({ ...pedido, status: "Aguardando confirmação" });
   }
 });
+
+export default router;
