@@ -2,7 +2,9 @@ import "./App.css";
 import "./output.css";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import Header from "./components/Header";
-import Featured from "./views/Featured";
+
+import Destaques from "./views/Destaques";
+import NovoPedido from "./views/NovoPedido";
 
 function App() {
   return (
@@ -10,8 +12,8 @@ function App() {
       <Header />
       <BrowserRouter>
         <Routes>
-          <Route index element={<Featured />} />
-          {/* <Route path="" element={<Home />} /> */}
+          <Route index element={<Destaques />} />
+          <Route path="/novo-pedido" element={<NovoPedido />} />
         </Routes>
       </BrowserRouter>
     </div>

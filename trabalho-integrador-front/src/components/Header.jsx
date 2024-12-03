@@ -3,10 +3,10 @@ import { Wheat } from "lucide-react";
 import React, { useState } from "react";
 
 function Header() {
-  const [isLogged, setIsLogged] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleNovoPedido = () => {
-    setIsLogged(!isLogged);
+    setIsAdmin(!isAdmin);
   };
 
   return (
@@ -18,25 +18,30 @@ function Header() {
           color="#426B1F"
           strokeWidth={"1.75px"}
         /> */}
-        <p className="text-3xl text-default-green font-serif">Food House</p>
+        <a
+          className="text-3xl text-default-green font-serif hover:cursor-pointer"
+          href="/"
+        >
+          Food House
+        </a>
       </div>
       <div className="ml-auto flex gap-5">
         {/* <button className="hover:border-b-2 border-default-green">
           Meu perfil
         </button> */}
-        {isLogged && (
+        {isAdmin && (
           <button className="hover:border-b-2 border-default-green">
             Gerenciar
           </button>
         )}
       </div>
       <div>
-        <button
-          onClick={handleNovoPedido}
+        <a
+          href="./novo-pedido"
           className="bg-default-green p-3 text-white rounded-md hover:opacity-75"
         >
           Novo pedido
-        </button>
+        </a>
       </div>
     </header>
   );
