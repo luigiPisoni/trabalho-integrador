@@ -1,5 +1,4 @@
 import express from "express";
-import { supabase } from "../db/banco.js";
 import { novo } from "../controllers/pedidoController.js";
 
 const pedidoRouter = express.Router();

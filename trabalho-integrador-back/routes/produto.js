@@ -1,19 +1,9 @@
 import express from "express";
-import { supabase } from "../db/banco.js";
+import { lista } from "../controllers/produtoController.js";
 
 const produtoRouter = express.Router();
 
-produtoRouter.get("/lista", async (req, res) => {
-  try {
-    const { data, erro } = await supabase.from("produto").select("*");
-    if (erro) throw erro;
-
-    res.json(data);
-  } catch (erro) {
-    console.log("erro: ", erro);
-    res.status(400).json({ erro: "Erro ao listar os produtos" });
-  }
-});
+produtoRouter.get("/lista", lista);
 
 // produtoRouter.post("/cadastro", (req, res) => {
 //   var produto = req.body;

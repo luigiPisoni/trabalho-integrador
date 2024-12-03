@@ -48,7 +48,7 @@ function ListCard({
         </div>
       </div>
       <div className="px-6 py-4 text-right">
-        <p className="font-bold text-xl">R$ {valor.toFixed(2)}</p>
+        {/* <p className="font-bold text-xl">R$ {valor.toFixed(2)}</p> */}
       </div>
     </div>
   );

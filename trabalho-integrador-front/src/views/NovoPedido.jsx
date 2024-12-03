@@ -1,4 +1,5 @@
 import PageHeader from "../components/PageHeader";
+import Header from "../components/Header";
 import ListCard from "../components/ListCard";
 import server from "../server";
 import { useEffect, useState } from "react";
@@ -20,7 +21,7 @@ function NovoPedido() {
     try {
       setLoading(true);
       const response = await server.get(`/${tabela}/lista`);
-      // console.log(response.data);
+      console.log(response.data);
 
       setListaItens(response.data);
       setLoading(false);
@@ -144,12 +145,13 @@ function NovoPedido() {
 
   return (
     <div>
+      <Header />
       <PageHeader titulo={"Novo pedido"} />
       <div className="px-8 md:px-24 py-8">
         <div className="grid grid-cols-3 gap-4">
           {loading ? (
             <div className="col-span-2 grid grid-cols-1 gap-4 h-fit">
-              <p>carregando...</p>
+              <p>Carregando...</p>
             </div>
           ) : (
             <div className="col-span-2 grid grid-cols-1 gap-4 h-fit">
@@ -179,9 +181,7 @@ function NovoPedido() {
                     codpdt={item.codpdt || -1}
                     nome={item.nome}
                     valor={item.valor}
-                    ingredientes={
-                      item.ingredientes ? item.ingredientes.join(", ") : []
-                    }
+                    ingredientes={item.ingredientes ? item.ingredientes : []}
                     adicionaCarrinho={adicionaCarrinho}
                   />
                 ))

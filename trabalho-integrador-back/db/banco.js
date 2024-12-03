@@ -1,16 +1,17 @@
-import { createClient } from "@supabase/supabase-js";
+import pgp_promise from "pg-promise";
 import dotenv from "dotenv";
 
 dotenv.config();
+const pgp = pgp_promise({}); //gratidão zuio
 
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+if (!process.env.DATABASE_KEY) {
   throw new Error("Você precisa das credenciais do banco no .env");
 }
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_KEY;
+const dbKey = process.env.DATABASE_KEY;
 
-// pra não ficar importando as credenciais em todos os arquivos de rotas, basta importar supabase
-export const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-console.log("Conexão com o banco Supabase inicializada");
+// pra não ficar importando as credenciais em todos os arquivos de rotas, basta importar database
+export const database = pgp(
+  `postgresql://postgres.elmsdvseyvgbmxeuxejv:${dbKey}@aws-0-sa-east-1.pooler.supabase.com:5432/postgres`
+);
+console.log("Conexão com o banco inicializada");

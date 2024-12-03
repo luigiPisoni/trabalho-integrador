@@ -1,7 +1,7 @@
 import "./App.css";
 import "./output.css";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
-import Header from "./components/Header";
+import Login from "./views/Login";
 
 import Destaques from "./views/Destaques";
 import NovoPedido from "./views/NovoPedido";
@@ -9,11 +9,11 @@ import NovoPedido from "./views/NovoPedido";
 function App() {
   return (
     <div className="App">
-      <Header />
       <BrowserRouter>
         <Routes>
           <Route index element={<Destaques />} />
           <Route path="/novo-pedido" element={<NovoPedido />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </div>

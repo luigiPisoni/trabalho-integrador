@@ -1,4 +1,5 @@
 import PageHeader from "../components/PageHeader";
+import Header from "../components/Header";
 import Card from "../components/Card";
 
 function Destaques() {
@@ -35,6 +36,7 @@ function Destaques() {
   ];
   return (
     <>
+      <Header />
       <PageHeader titulo={"Pratos em destaque"} />
       <div className="px-8 md:px-24 py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

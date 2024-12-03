@@ -1,5 +1,4 @@
 import express from "express";
-import { supabase } from "../db/banco.js";
 import { lista } from "../controllers/pratoController.js";
 
 const pratoRouter = express.Router();
