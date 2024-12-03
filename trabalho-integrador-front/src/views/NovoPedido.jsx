@@ -1,6 +1,7 @@
 import PageHeader from "../components/PageHeader";
 import ListCard from "../components/ListCard";
-import { useState } from "react";
+import server from "../server";
+import { useEffect, useState } from "react";
 import { MoveRight, MoveLeft } from "lucide-react";
 
 function NovoPedido() {
@@ -8,48 +9,71 @@ function NovoPedido() {
   // passo 2: produtos;
   // passo 3: descrição;
   const [passo, setPasso] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [listaItens, setListaItens] = useState([]);
 
   const [carrinho, setCarrinho] = useState([]);
   const [valorTotal, setValorTotal] = useState(0);
-  const [listaItens, setListaItens] = useState([
-    {
-      nome: "Prato em Destaque Lala",
-      preco: 49.99,
-      ingredientes: ["porco", "boi", "galinha"],
-    },
-    {
-      nome: "Prato em Destaque Lele",
-      preco: 2,
-      ingredientes: ["raditi", "alface", "repolho"],
-    },
-    {
-      nome: "Prato em Destaque Lili",
-      preco: 3,
-      ingredientes: ["cacetinho", "frances", "de forma"],
-    },
-    {
-      nome: "Prato em Destaque Lolo",
-      preco: 4,
-      ingredientes: ["brigadeiro", "bolo", "picole"],
-    },
-    {
-      nome: "Prato em Destaque Lulu",
-      preco: 5,
-      ingredientes: [
-        "pinche",
-        "pendejo",
-        "quihwduqdwiuhohqdwiquwhodiquwhdoiuqhwdoiuqhwdioohiuqwdihuqhiuwd",
-      ],
-    },
-  ]);
+  const [descricao, setDescricao] = useState("");
 
-  const handlePassos = (acao) => {
-    // verifica se o clique do botão é válido e pode ir ou voltar de passo.
-    var novoPasso = passo;
+  const getLista = async (tabela) => {
+    try {
+      setLoading(true);
+      const response = await server.get(`/${tabela}/lista`);
+      // console.log(response.data);
+
+      setListaItens(response.data);
+      setLoading(false);
+    } catch (erro) {
+      console.log(erro);
+
+      setLoading(false);
+    }
+  };
+
+  const postPedido = async (pedido) => {
+    try {
+      setLoading(true);
+
+      const response = await server.post("/pedido/novo", pedido);
+      alert("pedido criado");
+      window.location.href = "/";
+    } catch (erro) {
+      console.log(erro);
+      alert(erro);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getLista("prato");
+  }, []);
+
+  // controla cada parte da criação de um novo pedido
+  const handlePassos = async (acao) => {
+    // verifica se o clique do botão é válido para ir ou voltar de passo.
+    let novoPasso = passo;
     if (acao === "next") {
       if (passo < 3) {
         novoPasso = passo + 1;
         setPasso(novoPasso);
+      } else if (passo === 3) {
+        // aqui envia um novo pedido pro back
+
+        if (carrinho.length <= 0 || valorTotal < 0) {
+          alert("Sem itens no carrinho");
+          return;
+        }
+
+        let novoPedido = {
+          itens: carrinho,
+          valorTotal,
+          descricao,
+        };
+
+        setLoading(true);
+
+        await postPedido(novoPedido);
       }
     } else if (acao === "prev") {
       if (passo > 1) {
@@ -61,66 +85,61 @@ function NovoPedido() {
     // passo 1: listar os pratos
     // é usado novoPasso pela assincronização no setPasso
     if (novoPasso === 1) {
-      // pega os pratos do banco
-      var listaPlaceholder = [
-        {
-          nome: "produto em Destaque Lele",
-          preco: 2,
-          ingredientes: ["raditi", "alface", "repolho"],
-        },
-        {
-          nome: "produto em Destaque Lili",
-          preco: 3,
-          ingredientes: ["cacetinho", "frances", "de forma"],
-        },
-        {
-          nome: "produto em Destaque Lolo",
-          preco: 4,
-          ingredientes: ["brigadeiro", "bolo", "picole"],
-        },
-        {
-          nome: "produto em Destaque Lulu",
-          preco: 5,
-          ingredientes: [
-            "pinche",
-            "pendejo",
-            "quihwduqdwiuhohqdwiquwhodiquwhdoiuqhwdoiuqhwdioohiuqwdihuqhiuwd",
-          ],
-        },
-      ];
-
-      setListaItens(listaPlaceholder);
+      // pega a lista de pratos do banco
+      getLista("prato");
     }
 
     if (novoPasso === 2) {
-      // pega os pratos do banco
-      var listaPlaceholder = [
-        {
-          nome: "produto em Destaque Lulu",
-          preco: 5,
-        },
-      ];
-
-      setListaItens(listaPlaceholder);
+      // pega a lista de produtos do banco
+      getLista("produto");
     }
   };
 
-  // item = {nome, preco, qnt}
+  // item = {nome, valor, qnt}
   const adicionaCarrinho = (item) => {
     // não dá pra modificar carrinho, só definir um novo valor.
-    var carrinhoAtualizado = [...carrinho, item];
+
+    let novoItem = {
+      nome: item.nome,
+      valor: item.valor,
+      qnt: item.qnt,
+    };
+
+    if (item.codprt < 0) {
+      novoItem.codpdt = item.codpdt;
+    } else {
+      novoItem.codprt = item.codprt;
+    }
+
+    let carrinhoAtualizado = [...carrinho, novoItem];
 
     setCarrinho(carrinhoAtualizado);
-    setValorTotal(valorTotal + item.preco * item.qnt);
+    setValorTotal(valorTotal + item.valor * item.qnt);
+
+    // console.log(carrinho);
   };
 
-  const removeCarrinho = (key) => {
-    // cria uma nova lista sem o item removido.
-    const carrinhoAtualizado = carrinho.filter((item) => item.nome !== key);
-    const removedItem = carrinho.find((item) => item.nome === key);
+  const removeCarrinho = (item) => {
+    let carrinhoAtualizado = [];
+    let removedItem;
+
+    // cria uma nova lista sem o item removido e desconta o preço do valor total
+    if (item.codprt) {
+      carrinhoAtualizado = carrinho.filter(
+        // i.codprt || null é pra não comparar
+        (i) => (i.codprt || null) !== item.codprt
+      );
+
+      removedItem = carrinho.find((i) => i.codprt === item.codprt);
+    } else {
+      carrinhoAtualizado = carrinho.filter(
+        (i) => (i.codpdt || null) !== item.codpdt
+      );
+      removedItem = carrinho.find((i) => i.codpdt === item.codpdt);
+    }
 
     setCarrinho(carrinhoAtualizado);
-    setValorTotal(valorTotal - removedItem.preco * removedItem.qnt);
+    setValorTotal(valorTotal - removedItem.valor * removedItem.qnt);
   };
 
   return (
@@ -128,21 +147,47 @@ function NovoPedido() {
       <PageHeader titulo={"Novo pedido"} />
       <div className="px-8 md:px-24 py-8">
         <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-2 grid grid-cols-1 gap-4 h-fit">
-            {listaItens.map((item) => {
-              return (
-                <ListCard
-                  key={item.nome}
-                  nome={item.nome}
-                  preco={item.preco}
-                  ingredientes={
-                    item.ingredientes ? item.ingredientes.join(", ") : []
-                  }
-                  adicionaCarrinho={adicionaCarrinho}
-                />
-              );
-            })}
-          </div>
+          {loading ? (
+            <div className="col-span-2 grid grid-cols-1 gap-4 h-fit">
+              <p>carregando...</p>
+            </div>
+          ) : (
+            <div className="col-span-2 grid grid-cols-1 gap-4 h-fit">
+              {passo === 3 ? (
+                // caso passo === 3, vai renderizar o textfield
+                <div>
+                  <label
+                    htmlFor="custom-textfield"
+                    className="block font-bold mb-2"
+                  >
+                    Descrição do pedido (opcional):
+                  </label>
+                  <textarea
+                    id="custom-textfield"
+                    type="text"
+                    value={descricao}
+                    onChange={(e) => setDescricao(e.target.value)}
+                    className="border-2 rounded-md p-2 w-full h-fit"
+                    placeholder="Ex: sem carne, mais cebola..."
+                  />
+                </div>
+              ) : (
+                listaItens.map((item) => (
+                  <ListCard
+                    key={item.nome}
+                    codprt={item.codprt || -1}
+                    codpdt={item.codpdt || -1}
+                    nome={item.nome}
+                    valor={item.valor}
+                    ingredientes={
+                      item.ingredientes ? item.ingredientes.join(", ") : []
+                    }
+                    adicionaCarrinho={adicionaCarrinho}
+                  />
+                ))
+              )}
+            </div>
+          )}
           <div>
             <div className="border-2 rounded-3xl overflow-hidden bg-light-green px-6 py-4">
               <p className="font-bold">Resumo do pedido</p>
@@ -152,7 +197,7 @@ function NovoPedido() {
                     return (
                       <div
                         className="grid grid-cols-2 hover:bg-red-500 hover:cursor-pointer hover:pl-8 rounded-md transition-all"
-                        onClick={() => removeCarrinho(item.nome)}
+                        onClick={() => removeCarrinho(item)}
                       >
                         <div className="text-left">
                           <p className="">
@@ -161,7 +206,7 @@ function NovoPedido() {
                         </div>
                         <div className="text-right">
                           <p className="">
-                            R$ {(item.preco * item.qnt).toFixed(2)}
+                            R$ {(item.valor * item.qnt).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -180,10 +225,11 @@ function NovoPedido() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {passo != 1 && (
+                {passo !== 1 && (
                   <button
-                    className={`bg-gray-400 grid grid-cols-2 p-3 text-white rounded-md hover:opacity-80 transition-opacity w-full px-4`}
+                    className={`bg-gray-400 grid grid-cols-2 w-full px-4 p-3 text-white rounded-md disabled:opacity-75 hover:opacity-80 transition-opacity`}
                     onClick={() => handlePassos("prev")}
+                    disabled={loading}
                   >
                     <div>
                       <div>
@@ -196,12 +242,13 @@ function NovoPedido() {
                   </button>
                 )}
                 <button
-                  className={`bg-default-green grid grid-cols-2 p-3 text-white rounded-md hover:opacity-80 transition-opacity w-full px-4
+                  className={`bg-default-green grid grid-cols-2 w-full px-4 p-3 text-white rounded-md disabled:opacity-75 hover:opacity-80 transition-opacity 
                     ${passo === 1 && "col-span-2"}`}
                   onClick={() => handlePassos("next")}
+                  disabled={loading}
                 >
                   <div className="text-left">
-                    <p>Próximo</p>
+                    <p>{passo == 3 ? "Finalizar" : "Próximo"}</p>
                   </div>
                   <div>
                     <div>

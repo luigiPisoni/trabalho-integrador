@@ -1,28 +1,16 @@
-// import express from "express";
+import express from "express";
+import { supabase } from "../db/banco.js";
+import { novo } from "../controllers/pedidoController.js";
 
-// const router = express.Router();
+const pedidoRouter = express.Router();
 
-// const pedidos = {
-//   pratos: [{ nome: "prato", quantidade: 3 }],
-//   produtos: [{ nome: "coquinha gelada", quantidade: 2 }],
-// };
-
-// router.get("/listagem", (req, res) => {
+// pedidoRouter.get("/listagem", (req, res) => {
 //   const pedido = [
 //     { nome: "prato feito", quantidade: "2", status: "em andamento" },
 //   ];
 //   res.json(pedido);
 // });
 
-// router.post("/cadastro", (req, res) => {
-//   var pedido = req.body;
+pedidoRouter.post("/novo", novo);
 
-//   if (parseInt(pedido.quantidade) < 1 || parseInt(pedido.quantidade) > 10) {
-//     res.status(400).json({ erro: "Pedido inválido!!!" });
-//   } else {
-//     // res.send("Pedido criado!");
-//     res.json({ ...pedido, status: "Aguardando confirmação" });
-//   }
-// });
-
-// export default router;
+export default pedidoRouter;

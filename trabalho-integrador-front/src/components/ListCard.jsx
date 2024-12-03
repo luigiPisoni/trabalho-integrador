@@ -1,7 +1,15 @@
 import { useState } from "react";
 
-function ListCard({ nome, preco, ingredientes, adicionaCarrinho }) {
+function ListCard({
+  codprt,
+  codpdt,
+  nome,
+  valor,
+  ingredientes,
+  adicionaCarrinho,
+}) {
   const [qnt, setQnt] = useState(1);
+  // console.log(ingredientes);
 
   const handleQnt = (e) => {
     setQnt(e.target.value > 0 ? e.target.value : 1);
@@ -31,14 +39,16 @@ function ListCard({ nome, preco, ingredientes, adicionaCarrinho }) {
           />
           <button
             className="ml-2 bg-default-green text-white px-2 rounded-2xl"
-            onClick={() => adicionaCarrinho({ nome, preco, qnt })}
+            onClick={() =>
+              adicionaCarrinho({ codprt, codpdt, nome, valor, qnt })
+            }
           >
             Adicionar
           </button>
         </div>
       </div>
       <div className="px-6 py-4 text-right">
-        <p className="font-bold text-xl">R$ {preco.toFixed(2)}</p>
+        <p className="font-bold text-xl">R$ {valor.toFixed(2)}</p>
       </div>
     </div>
   );

@@ -5,27 +5,27 @@ function Destaques() {
   const pratosDestaques = [
     {
       nome: "Prato em Destaque Lala",
-      preco: 23.52,
+      valor: 23.52,
       ingredientes: ["porco", "boi", "galinha"],
     },
     {
       nome: "Prato em Destaque Lele",
-      preco: 23.53,
+      valor: 23.53,
       ingredientes: ["raditi", "alface", "repolho"],
     },
     {
       nome: "Prato em Destaque Lili",
-      preco: 23.51,
+      valor: 23.51,
       ingredientes: ["cacetinho", "frances", "de forma"],
     },
     {
       nome: "Prato em Destaque Lolo",
-      preco: 23.55,
+      valor: 23.55,
       ingredientes: ["brigadeiro", "bolo", "picole"],
     },
     {
       nome: "Prato em Destaque Lulu",
-      preco: 23.56,
+      valor: 23.56,
       ingredientes: [
         "pinche",
         "pendejo",
@@ -42,7 +42,7 @@ function Destaques() {
             return (
               <Card
                 nome={prato.nome}
-                preco={prato.preco}
+                valor={prato.valor}
                 ingredientes={prato.ingredientes}
                 onClick={() => {
                   window.location.href = "/novo-pedido";

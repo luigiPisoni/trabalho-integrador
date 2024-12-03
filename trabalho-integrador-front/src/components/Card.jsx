@@ -1,4 +1,4 @@
-function Card({ nome, preco, ingredientes, onClick }) {
+function Card({ nome, valor, ingredientes, onClick }) {
   return (
     <div
       className="border-2 rounded-3xl overflow-hidden hover:cursor-pointer hover:opacity-80 transition-opacity"
@@ -13,7 +13,7 @@ function Card({ nome, preco, ingredientes, onClick }) {
       </div>
       <div className="px-4 py-2 bg-light-green">
         <p className="font-bold">{nome}</p>
-        <p className="font-semibold text-default-green">R$ {preco}</p>
+        <p className="font-semibold text-default-green">R$ {valor}</p>
         <p className="truncate">{ingredientes}</p>
       </div>
     </div>
