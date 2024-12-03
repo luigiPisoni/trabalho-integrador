@@ -1,33 +1,35 @@
-// import express from "express";
-// import banco from "../banco.js";
-// const router = express.Router();
+import { database } from '../db/banco.js';
+import express from 'express';
 
-// const funcionarios = [
-//   {
-//     nome: "luigi",
-//     data_nascimento: "20/02/2000",
-//     salario: "2200",
-//   },
-// ];
+const pessoaRouter = express.Router();
 
-// router.get("/listagem", async(req, res) => {
-//   try {
-//     const pessoas = await banco.query('SELECT * FROM pessoa;');
-//     const resultado = pessoas.rows;
-//     res.json(resultado);
-//   } catch (erro) {
-//   res.status(400).send("Erro ao listar pessoas")
-//   }
-// });
+pessoaRouter.get('/lista', async (req, res) => {
+  try {
+    const renomeiaIssoAquiLuigi = await database.any('SELECT cpf, nome, endereco, cargo FROM pessoa;');
+    res.json(renomeiaIssoAquiLuigi);
+  } catch (errorLuigi) {
+    console.error('erro: ', errorLuigi);
+    res.status(400).json({ erro: 'Erro ao listar as pessoas' });
+  }
+});
 
-// router.post("/cadastro",async (req, res) => {
-//   try {
-//     const { nome, cpf, senha, cargo, endereco }= req.body;
-//     const resultado = await banco.query("INSERT INTO pessoa (cpf, nome, senha, cargo, endereco) VALUES ($1, $2, $3, $4, $5);", [cpf, nome, senha, cargo, endereco]);
-//     res.json(resultado.rowCount == 1);
-//   } catch (erro) {
-//   res.status(400).send("Erro ao inserir usuario")
-//   }
-// });
+pessoaRouter.post('/novo', async (req, res) => {
+  const { cpf, nome, senha, endereco, cargo } = req.body;
 
-// export default router;
+  try {
+    await database.none('INSERT INTO pessoa (cpf, nome, senha, endereco, cargo) VALUES ($1, $2, $3, $4, $5);', [
+      cpf,
+      nome,
+      senha,
+      endereco,
+      cargo,
+    ]);
+
+    res.json({ mensagem: 'Pessoa cadastrada com sucesso' });
+  } catch (error) {
+    console.error('erro: ', error);
+    res.status(400).json({ erro: 'Erro ao cadastrar a pessoa' });
+  }
+});
+
+export default pessoaRouter;

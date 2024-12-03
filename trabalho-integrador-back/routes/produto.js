@@ -1,9 +1,25 @@
-import express from "express";
-import { lista } from "../controllers/produtoController.js";
+import express from 'express';
+import { lista } from '../controllers/produtoController.js';
 
 const produtoRouter = express.Router();
 
-produtoRouter.get("/lista", lista);
+produtoRouter.get('/lista', lista);
+
+produtoRouter.post('/novo', async (req, res) => {
+  const { nome, valor } = req.body;
+
+  if (parseFloat(valor) < 0) {
+    return res.status(400).send({ erro: 'O valor não pode ser negativo seu jumento vai pagar pra comprar' });
+  }
+
+  try {
+    await database.none('INSERT INTO produto (nome, valor) VALUES ($1, $2);', [nome, valor]);
+    res.json({ mensagem: 'Produto cadastrado com sucesso' });
+  } catch (error) {
+    console.error('erro: ', error);
+    res.status(400).json({ erro: 'Erro ao cadastrar o produto' });
+  }
+});
 
 // produtoRouter.post("/cadastro", (req, res) => {
 //   var produto = req.body;
