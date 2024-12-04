@@ -1,6 +1,6 @@
 import { database } from '../db/banco.js';
 import express from 'express';
-import { hashPassword } from '../renomear_luigi/auth.js';
+import { hashPassword } from '../auth/auth.js';
 
 const pessoaRouter = express.Router();
 
