@@ -13,7 +13,6 @@ pessoaRouter.get('/lista', async (req, res) => {
     res.status(400).json({ erro: 'Erro ao listar as pessoas' });
   }
 });
-
 pessoaRouter.post('/novo', async (req, res) => {
   const { cpf, nome, senha, endereco, cargo } = req.body;
 
@@ -40,3 +39,4 @@ pessoaRouter.post('/novo', async (req, res) => {
 });
 
 export default pessoaRouter;
+

@@ -3,6 +3,7 @@ import { hashPassword, verifyHash } from '../renomear_luigi/auth.js';
 
 export async function lista(req, res) {
   try {
+    res.json(pratos);
     const pratos = await database.any('SELECT codprt, nome, valor FROM prato;');
     for (const prato of pratos) {
       const ingredientes = await database.any(
@@ -14,6 +15,8 @@ export async function lista(req, res) {
 
     res.json(pratos);
   } catch (erro) {
+    console.log('erro: ', erro);
+    res.status(400).json({ erro: 'Erro ao listar os pratos' });
     console.log('erro: ', erro);
     res.status(400).json({ erro: 'Erro ao listar os pratos' });
   }

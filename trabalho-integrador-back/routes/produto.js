@@ -1,5 +1,7 @@
 import express from 'express';
 import { lista } from '../controllers/produtoController.js';
+import express from 'express';
+import { lista } from '../controllers/produtoController.js';
 
 const produtoRouter = express.Router();
 
