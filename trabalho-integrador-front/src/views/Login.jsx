@@ -1,12 +1,54 @@
+import { useState } from "react";
+import server from "../server";
+
 function Login() {
+  const [login, setLogin] = useState(false);
+  const [formData, setFormData] = useState({
+    cpf: "",
+    email: "",
+    endereco: "",
+    senha: "",
+  });
+
+  const handleForm = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+
+    try {
+      const rota = "/pessoa/" + (login ? "login" : "cadastro");
+      const response = await server.post(rota, formData);
+
+      alert("credenciado com sucesso");
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    // console.log(name, value);
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   return (
     <div className="px-24 py-24 h-screen">
       <div className="grid grid-cols-5 h-full overflow-hidden rounded-xl shadow-2xl">
         <div className="bg-light-green col-span-2 align-middle text-center flex items-center justify-center">
           <div className="">
             <p className="font-serif text-5xl">Food House</p>
+            <p>Já possui conta? Faça login!</p>
             <div className="mt-8">
-              <button className="bg-default-green px-12 py-4 rounded-xl text-white">
+              <button
+                className="bg-default-green px-8 py-4 rounded-xl text-white"
+                onClick={() => {
+                  setLogin(!login);
+                }}
+              >
                 Login
               </button>
             </div>
@@ -14,27 +56,53 @@ function Login() {
         </div>
         <div className=" col-span-3 align-middle text-center flex items-center justify-center">
           <div>
-            <p className="text-4xl font-serif">Criar conta</p>
+            <p className="text-4xl font-serif">
+              {login ? "Login" : "Criar conta"}
+            </p>
             <div>
-              <form action="" className="grid grid-rows-4 gap-4 mt-8">
+              <form
+                className="grid grid-rows-4 gap-4 mt-4"
+                onSubmit={handleForm}
+              >
                 <input
-                  className="bg-slate-200 px-12 py-2 rounded-md"
+                  className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="text"
+                  name="cpf"
+                  value={formData.cpf}
+                  onChange={handleInputChange}
+                  placeholder="CPF"
                 />
                 <input
-                  className="bg-slate-200 px-12 py-2 rounded-md"
+                  className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="text"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Email"
+                  hidden={login}
                 />
                 <input
-                  className="bg-slate-200 px-12 py-2 rounded-md"
+                  className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="text"
+                  name="endereco"
+                  value={formData.endereco}
+                  onChange={handleInputChange}
+                  placeholder="Endereço"
+                  hidden={login}
                 />
                 <input
-                  className="bg-slate-200 px-12 py-2 rounded-md"
+                  className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="password"
+                  name="senha"
+                  value={formData.senha}
+                  onChange={handleInputChange}
+                  placeholder="Senha"
                 />
-                <button className="bg-default-green px-12 py-4 rounded-xl text-white mt-8">
-                  Cadastrar-se
+                <button
+                  className="bg-default-green px-2 py-2 rounded-xl text-white mt-8"
+                  type="submit"
+                >
+                  {login ? "Login" : "Cadastrar-se"}
                 </button>
               </form>
             </div>

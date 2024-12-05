@@ -1,9 +1,7 @@
-import { Wheat } from "lucide-react";
-// import { Link } from "react-router-dom";
 import React, { useState } from "react";
 
 function Header() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
 
   const handleNovoPedido = () => {
     setIsAdmin(!isAdmin);
@@ -11,13 +9,7 @@ function Header() {
 
   return (
     <header className="px-8 md:px-24 py-4 sm:py-7 sticky flex w-full top-0 z-50 items-center gap-6 md:gap-12 bg-white ">
-      {/* Container da logo e título */}
       <div className="flex">
-        {/* <Wheat
-          className="mr-3 sm:hidden"
-          color="#426B1F"
-          strokeWidth={"1.75px"}
-        /> */}
         <a
           className="text-3xl text-default-green font-serif hover:cursor-pointer"
           href="/"
@@ -25,15 +17,25 @@ function Header() {
           Food House
         </a>
       </div>
-      <div className="ml-auto flex gap-5">
-        {/* <button className="hover:border-b-2 border-default-green">
-          Meu perfil
-        </button> */}
-        {isAdmin && (
-          <button className="hover:border-b-2 border-default-green">
-            Gerenciar
-          </button>
-        )}
+
+      {isAdmin && (
+        <div className="ml-auto flex gap-5 px-4 py-2 bg-light-green rounded-md">
+          <p className="text-default-green font-bold">Gerência</p>
+          <a href="/dashboard" className="hover:font-semibold transition-all">
+            Dashboard
+          </a>
+          <a href="/dashboard" className="hover:font-semibold transition-all">
+            Pratos
+          </a>
+          <a href="/dashboard" className="hover:font-semibold transition-all">
+            Produtos
+          </a>
+        </div>
+      )}
+      <div>
+        <a href="/login" className="hover:font-semibold transition-all">
+          Login
+        </a>
       </div>
       <div>
         <a
