@@ -25,4 +25,22 @@ ingredienteRouter.post('/novo', async (req, res) => {
   }
 });
 
+ingredienteRouter.delete('/deletar/:codigo', async (req, res) => {
+  const { codigo } = req.params;
+
+  try {
+    // Excluir o ingrediente pelo código
+    const result = await database.result('DELETE FROM ingrediente WHERE codigo = $1;', [codigo]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ erro: 'Ingrediente não encontrado' });
+    }
+
+    res.status(200).json({ mensagem: 'Ingrediente deletado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao deletar ingrediente: ', error);
+    res.status(500).json({ erro: 'Erro no servidor ao tentar deletar o ingrediente' });
+  }
+});
+
 export default ingredienteRouter;

@@ -21,55 +21,21 @@ produtoRouter.post('/novo', async (req, res) => {
   }
 });
 
-// produtoRouter.post("/cadastro", (req, res) => {
-//   var produto = req.body;
+produtoRouter.delete('/deletar/:codprt', async (req, res) => {
+  const { codpdt } = req.params;
 
-//   if (
-//     produto.nome.length < 3 ||
-//     parseFloat(produto.valor) <= 0 ||
-//     parseFloat(produto.quantidade) < 1
-//   ) {
-//     res.status(400).json({ erro: "Produto inválido!!!" });
-//   } else {
-//     // res.send("Produto cadastrado!!!");
-//     res.json(produto);
-//   }
-// });
+  try {
+    const result = await database.result('DELETE FROM produto WHERE codpdt = $1;', [codpdt]);
 
-// // produtoRouter.put("/produtos/:id", (req, res) => {
-// //   const id = parseInt(req.params.id); // pegando o id
-// //   const produtoAtualizado = req.body; // pegando produto antigo
+    if (result.rowCount === 0) {
+      return res.status(404).json({ erro: 'Produto não encontrado' });
+    }
 
-// //   const index = produtos.findIndex((produto) => produto.id === id); //encontrando produto
-
-// //   if (index !== -1) {
-// //     // Verifica se o produto foi encontrado
-// //     if (
-// //       produtoAtualizado.nome.length < 3 ||
-// //       parseFloat(produtoAtualizado.valor) <= 0 ||
-// //       produtoAtualizado.tamanho.length < 2
-// //     ) {
-// //       return res.status(400).send("Produto inválido!!!");
-// //     }
-
-// //     // Atualizamos o produto
-// //     produtos[index] = { id, nome, valor, tamanho };
-// //     res.send("Produto atualizado com sucesso!");
-// //   } else {
-// //     res.status(404).send("Produto não encontrado!");
-// //   }
-// // });
-
-// // router.delete("/produtos/:id", (req, res) => {
-// //   const id = parseInt(req.params.id);
-
-// //   const index = produtos.findIndex((produto) => produto.id === id);
-// //   if (index !== -1) {
-// //     produtos.splice(index, 1); // removendo produto
-// //     res.send("Produto removido com sucesso!");
-// //   } else {
-// //     res.status(404).send("Produto não encontrado!");
-// //   }
-// // });
+    res.status(200).json({ mensagem: 'Produto foi deletado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao deletar produto: ', error);
+    res.status(500).json({ erro: 'Erro no servidor ao tentar deletar o produto' });
+  }
+});
 
 export default produtoRouter;

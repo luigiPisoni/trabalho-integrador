@@ -38,5 +38,31 @@ pessoaRouter.post('/novo', async (req, res) => {
   }
 });
 
+pessoaRouter.delete('/deletar/:cpf', async (req, res) => {
+  const { cpf } = req.params;
+
+  try {
+    // Verificar se a pessoa existe
+    const pessoaExistente = await database.oneOrNone('SELECT * FROM pessoa WHERE cpf = $1;', [cpf]);
+
+    if (!pessoaExistente) {
+      return res.status(404).json({ erro: 'Pessoa não encontrada.' });
+    }
+
+    // Excluir a pessoa
+    const result = await database.result('DELETE FROM pessoa WHERE cpf = $1;', [cpf]);
+
+    // Verifica se a pessoa foi deletada
+    if (result.rowCount === 0) {
+      return res.status(404).json({ erro: 'Pessoa não encontrada para exclusão.' });
+    }
+
+    res.status(200).json({ mensagem: 'Pessoa deletada com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao deletar pessoa:', error);
+    res.status(500).json({ erro: 'Erro ao tentar deletar a pessoa.' });
+  }
+});
+
 export default pessoaRouter;
 

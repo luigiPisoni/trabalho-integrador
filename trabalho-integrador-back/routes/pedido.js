@@ -78,4 +78,24 @@ pedidoRouter.get('/lista', async (req, res) => {
   }
 });
 
+pedidoRouter.delete('/deletar/:codigo', async (req, res) => {
+  const { codigo } = req.params;
+
+  try {
+    // Excluir o pedido pelo código
+    const result = await database.result('DELETE FROM pedido WHERE codigo = $1;', [codigo]);
+
+    // Verifica se o pedido foi encontrado
+    if (result.rowCount === 0) {
+      return res.status(404).json({ erro: 'Pedido não encontrado.' });
+    }
+
+    res.status(200).json({ mensagem: 'Pedido deletado com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao deletar pedido:', error);
+    res.status(500).json({ erro: 'Erro no servidor ao tentar deletar o pedido.' });
+  }
+});
+
+
 export default pedidoRouter;
