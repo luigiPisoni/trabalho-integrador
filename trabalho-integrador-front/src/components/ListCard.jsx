@@ -27,7 +27,7 @@ function ListCard({
         <p className="font-bold">{nome}</p>
         {ingredientes && (
           <p className="font-semibold text-default-green truncate">
-            {ingredientes}
+            {ingredientes.join(", ")}
           </p>
         )}
         <div>
@@ -48,7 +48,7 @@ function ListCard({
         </div>
       </div>
       <div className="px-6 py-4 text-right">
-        {/* <p className="font-bold text-xl">R$ {valor.toFixed(2)}</p> */}
+        <p className="font-bold text-xl">R$ {parseFloat(valor).toFixed(2)}</p>
       </div>
     </div>
   );

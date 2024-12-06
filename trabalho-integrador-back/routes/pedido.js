@@ -1,69 +1,75 @@
-import express from 'express';
-import { database } from '../db/banco.js';
+import express from "express";
+import { database } from "../db/banco.js";
 
 const pedidoRouter = express.Router();
 
-pedidoRouter.post('/novo', async (req, res) => {
+pedidoRouter.post("/novo", async (req, res) => {
   try {
-    const { cpf, valor, datahora, descricao, tipoPagamento, produtos, pratos } = req.body;
+    const { cpf, valor, datahora, descricao, tipoPagamento, produtos, pratos } =
+      req.body;
 
     if (parseFloat(valor) < 0) {
-      return res.status(400).json({ erro: 'Mulheres não são bem vindas no clube dos meninos!' });
+      return res.status(400).json({
+        mensagem: "Mulheres não são bem vindas no clube dos meninos!",
+      });
     }
 
     await database.tx(async (tx) => {
       const criarPedido = await tx.one(
-        'INSERT INTO pedido (pessoa_id, valor, datahora, descricao, status, tipo_pagamento) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;',
-        [cpf, valor, datahora, descricao ?? null, 'pendente', tipoPagamento]
+        "INSERT INTO pedido (cpf, valor, datahora, descricao, status, tipo_pagamento) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;",
+        [cpf, valor, datahora, descricao ?? null, "pendente", tipoPagamento]
       );
 
       const criarPedidoProduto = produtos.map((produto) => {
         const { codigo, quantidade } = produto;
-        return tx.none('INSERT INTO pedido_produto (pedido_codigo, produto_codigo, quantidade) VALUES ($1, $2, $3);', [
-          criarPedido.codigo,
-          codigo,
-          quantidade,
-        ]);
+        return tx.none(
+          "INSERT INTO pedido_produto (pedido_codigo, produto_codigo, quantidade) VALUES ($1, $2, $3);",
+          [criarPedido.codigo, codigo, quantidade]
+        );
       });
 
       const criarPedidoPrato = pratos.map((prato) => {
         const { codigo, quantidade } = prato;
-        return tx.none('INSERT INTO pedido_prato (pedido_codigo, prato_codigo, quantidade) VALUES ($1, $2, $3);', [
-          criarPedido.codigo,
-          codigo,
-          quantidade,
-        ]);
+        return tx.none(
+          "INSERT INTO pedido_prato (pedido_codigo, prato_codigo, quantidade) VALUES ($1, $2, $3);",
+          [criarPedido.codigo, codigo, quantidade]
+        );
       });
 
-      return tx.batch([criarPedido, ...criarPedidoProduto, ...criarPedidoPrato]);
+      return tx.batch([
+        criarPedido,
+        ...criarPedidoProduto,
+        ...criarPedidoPrato,
+      ]);
     });
 
-    res.status(201).json({ mensagem: 'Pedido criado com sucesso!' });
+    res.status(201).json({ mensagem: "Pedido criado com sucesso!" });
   } catch (errorLuigi) {
-    console.error('erro: ', errorLuigi);
-    res.status(400).json({ erro: 'Erro ao criar o pedido!' });
+    console.error("mensagem: ", errorLuigi);
+    res.status(400).json({ mensagem: "Erro ao criar o pedido!" });
   }
 });
 
-pedidoRouter.get('/lista', async (req, res) => {
+pedidoRouter.get("/lista", async (req, res) => {
   try {
     const pedidos = await database.any(
-      'SELECT codigo, pessoa_id, valor, datahora, descricao, status, tipo_pagamento FROM pedido;'
+      "SELECT codigo, cpf, valor, datahora, descricao, status, tipo_pagamento FROM pedido;"
     );
     for (const pedido of pedidos) {
-      const pessoa = await database.one('SELECT cpf, nome, endereco, cargo FROM pessoa WHERE cpf = $1;', [
-        pedido.pessoa_id,
-      ]);
+      const pessoa = await database.one(
+        "SELECT cpf, nome, endereco, cargo FROM pessoa WHERE cpf = $1;",
+        [pedido.cpf]
+      );
       pedido.pessoa = pessoa;
-      delete pedido.pessoa_id;
+      delete pedido.cpf;
 
       const produtos = await database.any(
-        'SELECT produto_codigo, quantidade, nome, valor FROM pedido_produto JOIN produto ON produto.codpdt = pedido_produto.produto_codigo WHERE pedido_codigo = $1;',
+        "SELECT produto_codigo, quantidade, nome, valor FROM pedido_produto JOIN produto ON produto.codpdt = pedido_produto.produto_codigo WHERE pedido_codigo = $1;",
         [pedido.codigo]
       );
 
       const pratos = await database.any(
-        'SELECT prato_codigo, quantidade, nome, valor FROM pedido_prato JOIN prato ON prato.codprt = pedido_prato.prato_codigo WHERE pedido_codigo = $1;',
+        "SELECT prato_codigo, quantidade, nome, valor FROM pedido_prato JOIN prato ON prato.codprt = pedido_prato.prato_codigo WHERE pedido_codigo = $1;",
         [pedido.codigo]
       );
 
@@ -73,29 +79,33 @@ pedidoRouter.get('/lista', async (req, res) => {
 
     res.status(200).json(pedidos);
   } catch (error) {
-    console.error('erro: ', error);
-    res.status(400).json({ erro: 'Erro ao buscar os pedidos!' });
+    console.error("mensagem: ", error);
+    res.status(400).json({ mensagem: "Erro ao buscar os pedidos!" });
   }
 });
 
-pedidoRouter.delete('/deletar/:codigo', async (req, res) => {
+pedidoRouter.delete("/deletar/:codigo", async (req, res) => {
   const { codigo } = req.params;
 
   try {
     // Excluir o pedido pelo código
-    const result = await database.result('DELETE FROM pedido WHERE codigo = $1;', [codigo]);
+    const result = await database.result(
+      "DELETE FROM pedido WHERE codigo = $1;",
+      [codigo]
+    );
 
     // Verifica se o pedido foi encontrado
     if (result.rowCount === 0) {
-      return res.status(404).json({ erro: 'Pedido não encontrado.' });
+      return res.status(404).json({ mensagem: "Pedido não encontrado." });
     }
 
-    res.status(200).json({ mensagem: 'Pedido deletado com sucesso.' });
+    res.status(200).json({ mensagem: "Pedido deletado com sucesso." });
   } catch (error) {
-    console.error('Erro ao deletar pedido:', error);
-    res.status(500).json({ erro: 'Erro no servidor ao tentar deletar o pedido.' });
+    console.error("Erro ao deletar pedido:", error);
+    res
+      .status(500)
+      .json({ mensagem: "Erro no servidor ao tentar deletar o pedido." });
   }
 });
-
 
 export default pedidoRouter;

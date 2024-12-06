@@ -1,27 +1,33 @@
 import { useState } from "react";
 import server from "../server";
+import InputMask from "react-input-mask";
+import { toast } from "react-toastify";
 
 function Login() {
   const [login, setLogin] = useState(false);
   const [formData, setFormData] = useState({
     cpf: "",
-    email: "",
+    nome: "",
     endereco: "",
     senha: "",
   });
 
   const handleForm = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
 
     try {
       const rota = "/pessoa/" + (login ? "login" : "cadastro");
+      console.log(rota);
+
       const response = await server.post(rota, formData);
 
-      alert("credenciado com sucesso");
+      // toast("Cadastrado com sucesso");
       window.location.href = "/";
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.erro);
+
+      toast(error.response.data.erro);
     }
   };
 
@@ -67,20 +73,27 @@ function Login() {
                 <input
                   className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="text"
-                  name="cpf"
-                  value={formData.cpf}
+                  name="nome"
+                  value={formData.nome}
                   onChange={handleInputChange}
-                  placeholder="CPF"
-                />
-                <input
-                  className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
-                  type="text"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Email"
+                  placeholder="Nome"
                   hidden={login}
                 />
+                <InputMask
+                  mask="999.999.999-99"
+                  value={formData.cpf}
+                  onChange={handleInputChange}
+                >
+                  {(inputProps) => (
+                    <input
+                      {...inputProps}
+                      className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
+                      type="text"
+                      name="cpf"
+                      placeholder="CPF"
+                    />
+                  )}
+                </InputMask>
                 <input
                   className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="text"
@@ -90,6 +103,7 @@ function Login() {
                   placeholder="Endereço"
                   hidden={login}
                 />
+
                 <input
                   className="text-lg border-2 rounded-2xl mt-2 px-4 py-2 max-w-80"
                   type="password"

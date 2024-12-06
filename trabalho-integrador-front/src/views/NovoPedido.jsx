@@ -4,6 +4,7 @@ import ListCard from "../components/ListCard";
 import server from "../server";
 import { useEffect, useState } from "react";
 import { MoveRight, MoveLeft } from "lucide-react";
+import { toast } from "react-toastify";
 
 function NovoPedido() {
   // passo 1: pratos;
@@ -21,13 +22,13 @@ function NovoPedido() {
     try {
       setLoading(true);
       const response = await server.get(`/${tabela}/lista`);
-      console.log(response.data);
+      // console.log(response.data);
 
       setListaItens(response.data);
       setLoading(false);
     } catch (erro) {
       console.log(erro);
-
+      toast("Erro ao listar os itens.");
       setLoading(false);
     }
   };
@@ -41,7 +42,7 @@ function NovoPedido() {
       window.location.href = "/";
     } catch (erro) {
       console.log(erro);
-      alert(erro);
+      toast("Erro ao registrar seu pedido, por favor tente novamente.");
       setLoading(false);
     }
   };
@@ -116,8 +117,6 @@ function NovoPedido() {
 
     setCarrinho(carrinhoAtualizado);
     setValorTotal(valorTotal + item.valor * item.qnt);
-
-    // console.log(carrinho);
   };
 
   const removeCarrinho = (item) => {
@@ -174,17 +173,27 @@ function NovoPedido() {
                   />
                 </div>
               ) : (
-                listaItens.map((item) => (
-                  <ListCard
-                    key={item.nome}
-                    codprt={item.codprt || -1}
-                    codpdt={item.codpdt || -1}
-                    nome={item.nome}
-                    valor={item.valor}
-                    ingredientes={item.ingredientes ? item.ingredientes : []}
-                    adicionaCarrinho={adicionaCarrinho}
-                  />
-                ))
+                listaItens.map((item) => {
+                  let ingredientes = [];
+
+                  if ("ingredientes" in item) {
+                    for (const ingrediente of item.ingredientes) {
+                      ingredientes.push(ingrediente.nome);
+                    }
+                  }
+
+                  return (
+                    <ListCard
+                      key={item.codprt || item.codpdt}
+                      codprt={item.codprt || -1}
+                      codpdt={item.codpdt || -1}
+                      nome={item.nome}
+                      valor={item.valor}
+                      ingredientes={ingredientes}
+                      adicionaCarrinho={adicionaCarrinho}
+                    />
+                  );
+                })
               )}
             </div>
           )}
