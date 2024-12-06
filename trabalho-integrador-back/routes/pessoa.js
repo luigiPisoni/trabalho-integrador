@@ -10,8 +10,8 @@ pessoaRouter.get("/lista", async (req, res) => {
       "SELECT cpf, nome, endereco, cargo FROM pessoa;"
     );
     res.json(response);
-  } catch (errorLuigi) {
-    console.error("mensagem ", errorLuigi);
+  } catch (error) {
+    console.error("mensagem ", error);
     res.status(400).json({ mensagem: "Erro ao listar as pessoas" });
   }
 });

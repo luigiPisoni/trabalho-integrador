@@ -69,7 +69,7 @@ function NovoPedido() {
 
         let novoPedido = {
           itens: carrinho,
-          valorTotal,
+          valor: valorTotal,
           descricao,
         };
 

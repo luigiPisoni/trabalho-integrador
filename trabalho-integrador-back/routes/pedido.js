@@ -5,8 +5,9 @@ const pedidoRouter = express.Router();
 
 pedidoRouter.post("/novo", async (req, res) => {
   try {
-    const { cpf, valor, datahora, descricao, tipoPagamento, produtos, pratos } =
-      req.body;
+    console.log(req.body);
+
+    const { cpf, valor, descricao, tipoPagamento, produtos, pratos } = req.body;
 
     if (parseFloat(valor) < 0) {
       return res.status(400).json({
@@ -16,8 +17,8 @@ pedidoRouter.post("/novo", async (req, res) => {
 
     await database.tx(async (tx) => {
       const criarPedido = await tx.one(
-        "INSERT INTO pedido (cpf, valor, datahora, descricao, status, tipo_pagamento) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;",
-        [cpf, valor, datahora, descricao ?? null, "pendente", tipoPagamento]
+        "INSERT INTO pedido (cpf, valor, descricao, status, tipo_pagamento) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+        [cpf, valor, descricao ?? null, "pendente", tipoPagamento]
       );
 
       const criarPedidoProduto = produtos.map((produto) => {
@@ -44,8 +45,8 @@ pedidoRouter.post("/novo", async (req, res) => {
     });
 
     res.status(201).json({ mensagem: "Pedido criado com sucesso!" });
-  } catch (errorLuigi) {
-    console.error("mensagem: ", errorLuigi);
+  } catch (error) {
+    console.error("mensagem: ", error);
     res.status(400).json({ mensagem: "Erro ao criar o pedido!" });
   }
 });
