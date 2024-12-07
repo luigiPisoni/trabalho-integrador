@@ -1,5 +1,5 @@
 import { database } from "../db/banco.js";
-import { hashPassword, verifyHash } from "../auth/auth.js";
+// import { hashPassword, verifyHash } from "../auth/auth.js";
 
 export async function lista(req, res) {
   try {

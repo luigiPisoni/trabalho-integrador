@@ -1,12 +1,13 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
 
-import pratoRoute from './routes/prato.js';
-import pedidoRoute from './routes/pedido.js';
-import pessoaRoute from './routes/pessoa.js';
-import produtoRoute from './routes/produto.js';
-import ingredienteRoute from './routes/ingrediente.js';
-import lucroRoute from './routes/lucro.js';
+import pratoRoute from "./routes/prato.js";
+import pedidoRoute from "./routes/pedido.js";
+import pessoaRoute from "./routes/pessoa.js";
+import produtoRoute from "./routes/produto.js";
+import ingredienteRoute from "./routes/ingrediente.js";
+import lucroRoute from "./routes/lucro.js";
+import { verificarToken } from "./auth/auth.js";
 
 const server = express();
 
@@ -17,12 +18,15 @@ server.use(express.urlencoded({ extended: true }));
 const port = 3001;
 
 server.listen(port, () => {
-  console.log('Server iniciado no port ' + port);
+  console.log("Server iniciado no port " + port);
 });
 
-server.use('/prato', pratoRoute);
-server.use('/pedido', pedidoRoute);
-server.use('/pessoa', pessoaRoute);
-server.use('/produto', produtoRoute);
-server.use('/ingrediente', ingredienteRoute);
-server.use('/lucro', lucroRoute);
+server.use("/prato", pratoRoute);
+server.use("/pessoa", pessoaRoute);
+
+// as rotas daqui pora baixo vai precisa do token
+server.use(verificarToken);
+server.use("/pedido", pedidoRoute);
+server.use("/produto", produtoRoute);
+server.use("/ingrediente", ingredienteRoute);
+server.use("/lucro", lucroRoute);

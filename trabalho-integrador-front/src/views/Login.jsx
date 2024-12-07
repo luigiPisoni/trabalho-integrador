@@ -22,12 +22,12 @@ function Login() {
 
       const response = await server.post(rota, formData);
 
-      // toast("Cadastrado com sucesso");
+      toast.success(response.data.mensagem);
+      localStorage.setItem("token", response.data.token);
       window.location.href = "/";
     } catch (error) {
-      console.log(error.response.data.erro);
-
-      toast(error.response.data.erro);
+      // console.log(error.response.data.mensagem);
+      toast.error("Ocorreu um erro, tente novamente");
     }
   };
 

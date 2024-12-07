@@ -12,7 +12,12 @@ import Dashboard from "./views/Dashboard";
 function App() {
   return (
     <div className="App">
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        draggable={false}
+      />
       <BrowserRouter>
         <Routes>
           <Route index element={<Destaques />} />

@@ -1,18 +1,28 @@
-import { randomBytes, createHash, scryptSync } from 'crypto';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-// salt = se não passar ele cria um novo
-// password nunca pode ser null
-export function hashPassword(password, salt) {
-  const databaseSalt = salt ?? randomBytes(16).toString('hex');
-  const shaedPass = createHash('sha256').update(password).digest('hex');
-  const backendPepper = `${databaseSalt}#${shaedPass}`;
+dotenv.config();
 
-  const hash = scryptSync(password, backendPepper, 40).toString('hex');
-  return `${databaseSalt}.${hash}`;
+export function criarToken(key) {
+  return jwt.sign({ key }, process.env.TOKEN_KEY, { expiresIn: "1d" });
 }
 
-export function verifyHash(password, hashedPassword) {
-  const [databaseSalt, hashValue] = hashedPassword.split('.');
-  const [salt, hash] = hashPassword(password, databaseSalt).split('.');
-  return salt === databaseSalt && hash === hashValue;
+export function verificarToken(req, res, next) {
+  try {
+    let token = req.get("Authorization");
+
+    if (!token || token.length < 5) {
+      res.status(401).json({ mensagem: "Sessão inválida" });
+      return;
+    }
+    token = token.replace("Bearer ", "");
+
+    jwt.verify(token, process.env.TOKEN_KEY);
+
+    next();
+  } catch (error) {
+    console.log(error);
+
+    res.status(401).json({ mensagem: "Sessão inválida" });
+  }
 }
