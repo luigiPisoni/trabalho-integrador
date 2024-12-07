@@ -1,7 +1,9 @@
 import { database } from "../db/banco.js";
 export async function novo(req, res) {
   try {
-    const { cpf, valor, descricao, tipoPagamento, produtos, pratos } = req.body;
+    let { cpf="111.111.111-11", valor, descricao, tipoPagamento="dinheiro", produtos, pratos } = req.body;
+    console.log(req.body);
+    
 
     if (parseFloat(valor) < 0) {
       return res.status(400).json({
