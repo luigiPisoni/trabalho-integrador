@@ -1,10 +1,10 @@
-import PageHeader from "../components/PageHeader";
+import { MoveLeft, MoveRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Header from "../components/Header";
 import ListCard from "../components/ListCard";
+import PageHeader from "../components/PageHeader";
 import server from "../server";
-import { useEffect, useState } from "react";
-import { MoveRight, MoveLeft } from "lucide-react";
-import { toast } from "react-toastify";
 
 function NovoPedido() {
   // passo 1: pratos;
@@ -38,11 +38,11 @@ function NovoPedido() {
       setLoading(true);
 
       const response = await server.post("/pedido/novo", pedido);
-      alert("pedido criado");
+      toast(response.data.mensagem);
       window.location.href = "/";
     } catch (erro) {
       console.log(erro);
-      toast("Erro ao registrar seu pedido, por favor tente novamente.");
+      toast(erro);
       setLoading(false);
     }
   };
@@ -63,7 +63,7 @@ function NovoPedido() {
         // aqui envia um novo pedido pro back
 
         if (carrinho.length <= 0 || valorTotal < 0) {
-          alert("Sem itens no carrinho");
+          toast("Sem itens no carrinho");
           return;
         }
 

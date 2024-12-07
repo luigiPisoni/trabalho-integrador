@@ -1,4 +1,6 @@
 function Card({ nome, valor, ingredientes, onClick }) {
+  // console.log(ingredientes);
+
   return (
     <div
       className="border-2 rounded-3xl overflow-hidden hover:cursor-pointer hover:opacity-80 transition-opacity"

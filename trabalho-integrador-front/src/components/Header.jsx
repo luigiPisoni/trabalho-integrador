@@ -3,10 +3,6 @@ import React, { useState } from "react";
 function Header() {
   const [isAdmin, setIsAdmin] = useState(true);
 
-  const handleNovoPedido = () => {
-    setIsAdmin(!isAdmin);
-  };
-
   return (
     <header className="px-8 md:px-24 py-4 sm:py-7 sticky flex w-full top-0 z-50 items-center gap-6 md:gap-12 bg-white ">
       <div className="flex">
@@ -24,10 +20,10 @@ function Header() {
           <a href="/dashboard" className="hover:font-semibold transition-all">
             Dashboard
           </a>
-          <a href="/dashboard" className="hover:font-semibold transition-all">
+          <a href="/controle" className="hover:font-semibold transition-all">
             Pratos
           </a>
-          <a href="/dashboard" className="hover:font-semibold transition-all">
+          <a href="/controle" className="hover:font-semibold transition-all">
             Produtos
           </a>
         </div>
