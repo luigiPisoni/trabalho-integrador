@@ -17,7 +17,7 @@ function Login() {
     // console.log(formData);
 
     try {
-      const rota = "/pessoa/" + (login ? "login" : "cadastro");
+      const rota = "/" + (login ? "login" : "cadastro");
       console.log(rota);
 
       const response = await server.post(rota, formData);

@@ -1,6 +1,6 @@
 import express from 'express';
-import { database } from '../db/banco.js';
-import { novo,lista, deletar, atualizar,add_produto,remove_produto,edita_produto,add_prato,remove_prato,edita_prato } from '../controllers/pedidoController.js';
+import { database } from '../../db/banco.js';
+import { novo,lista, deletar, atualizar,add_produto,remove_produto,edita_produto,add_prato,remove_prato,edita_prato } from '../../controllers/pedidoController.js';
 
 const pedidoRouter = express.Router();
 

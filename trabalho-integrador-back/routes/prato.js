@@ -4,7 +4,7 @@ import { database } from '../db/banco.js';
 
 const pratoRouter = express.Router();
 
-pratoRouter.get('/lista', lista);
+
 
 pratoRouter.post('/novo', novo);
 
