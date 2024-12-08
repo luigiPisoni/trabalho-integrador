@@ -130,7 +130,7 @@ function Controle() {
                       nome: item.nome,
                       valor: item.valor,
                       ingredientes:
-                        pagina == "prato" ? item.ingredientes || [{}] : [],
+                        pagina == "pratos" ? item.ingredientes || [{}] : [],
                     });
                     setAction("atualizar");
                   }}

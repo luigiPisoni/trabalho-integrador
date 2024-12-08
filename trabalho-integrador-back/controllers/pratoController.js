@@ -1,6 +1,18 @@
 import { database } from "../db/banco.js";
 // import { hashPassword, verifyHash } from "../auth/auth.js";
 
+export async function destaques(req, res) {
+  try {
+    const pratos = await database.any(
+      "SELECT p.* FROM prato p JOIN pedido_prato pp ON p.codprt = pp.prato_codigo GROUP BY p.codprt LIMIT 5;"
+    );
+    console.log();
+    res.send();
+  } catch (error) {
+    res.status(400).json({ mensagem: "Erro ao listar os pratos em destaque " });
+  }
+}
+
 export async function listaPrato(req, res) {
   try {
     // res.json(pratos);

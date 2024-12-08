@@ -45,7 +45,7 @@ function Modal({
         ultimoIngrediente.unidade &&
         ultimoIngrediente.nome
       ) {
-        // Adiciona uma nova linha vazia
+        // caso a última linha de ingredientes esteja completa, cria uma nova
         novoIngredientes.push({});
       }
     }
