@@ -337,3 +337,31 @@ export async function edita_prato(req, res) {
       .json({ mensagem: "Erro no servidor ao tentar editar pratos" });
   }
 }
+export async function status(req, res) {
+  try {
+    // Consulta SQL para contar pedidos por status
+    const tabela = await database.query(
+      "SELECT status, COUNT(*) as total FROM pedido GROUP BY status;"
+    );
+
+    // Processamento de dados com tratamento de erros
+    const formattedData = tabela
+      .map((row) => {
+        try {
+          return {
+            status: row.status,
+            total: parseInt(row.total, 10),
+          };
+        } catch (error) {
+          console.error("Erro ao formatar os dados da linha:", row, error);
+          return null; // Retorna null para as linhas que falharem
+        }
+      })
+      .filter((row) => row !== null); // Remove as linhas que falharem
+
+    res.json({ pedidosPorStatus: formattedData });
+  } catch (error) {
+    console.error("Erro na consulta SQL:", error);
+    res.status(500).json({ error: "Erro ao acessar o banco de dados." });
+  }
+}
