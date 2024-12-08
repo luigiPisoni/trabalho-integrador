@@ -1,3 +1,5 @@
+import { Plus } from "lucide-react";
+
 function Card({ nome, valor, ingredientes, onClick }) {
   // console.log(ingredientes);
 
@@ -14,9 +16,11 @@ function Card({ nome, valor, ingredientes, onClick }) {
         />
       </div>
       <div className="px-4 py-2 bg-light-green">
-        <p className="font-bold">{nome}</p>
-        <p className="font-semibold text-default-green">R$ {valor}</p>
-        <p className="truncate">{ingredientes}</p>
+        {nome ? <p className="font-bold">{nome}</p> : <Plus />}
+        {valor && (
+          <p className="font-semibold text-default-green">R$ {valor}</p>
+        )}
+        {/* <p className="truncate">{ingredientes}</p> */}
       </div>
     </div>
   );

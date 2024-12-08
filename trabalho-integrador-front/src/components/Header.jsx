@@ -27,7 +27,7 @@ function Header() {
       </div>
 
       {isAdmin && (
-        <div className="ml-auto flex gap-5 px-4 py-2 bg-light-green rounded-md">
+        <div className="ml-auto flex gap-5 px-4 py-2 bg-light-green rounded-lg">
           <p className="text-default-green font-bold">Gerência</p>
           <a href="/dashboard" className="hover:font-semibold transition-all">
             Dashboard
@@ -60,7 +60,7 @@ function Header() {
       <div>
         <a
           href="./novo-pedido"
-          className="bg-default-green p-3 text-white rounded-md hover:opacity-75"
+          className="bg-default-green p-3 text-white rounded-lg hover:opacity-75"
         >
           Novo pedido
         </a>

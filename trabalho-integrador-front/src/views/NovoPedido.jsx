@@ -193,7 +193,7 @@ function NovoPedido() {
                     type="text"
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
-                    className="border-2 rounded-md p-2 w-full h-fit"
+                    className="border-2 rounded-lg p-2 w-full h-fit"
                     placeholder="Ex: sem carne, mais cebola..."
                   />
                 </div>
@@ -230,7 +230,7 @@ function NovoPedido() {
                   carrinho.map((item) => {
                     return (
                       <div
-                        className="grid grid-cols-2 hover:bg-red-500 hover:cursor-pointer hover:pl-8 rounded-md transition-all"
+                        className="grid grid-cols-2 hover:bg-red-500 hover:cursor-pointer hover:pl-8 rounded-lg transition-all"
                         onClick={() => removeCarrinho(item)}
                       >
                         <div className="text-left">
@@ -261,7 +261,7 @@ function NovoPedido() {
               <div className="grid grid-cols-2 gap-4">
                 {passo !== 1 && (
                   <button
-                    className={`bg-gray-400 grid grid-cols-2 w-full px-4 p-3 text-white rounded-md disabled:opacity-75 hover:opacity-80 transition-opacity`}
+                    className={`bg-gray-400 grid grid-cols-2 w-full px-4 p-3 text-white rounded-lg disabled:opacity-75 hover:opacity-80 transition-opacity`}
                     onClick={() => handlePassos("prev")}
                     disabled={loading}
                   >
@@ -276,7 +276,7 @@ function NovoPedido() {
                   </button>
                 )}
                 <button
-                  className={`bg-default-green grid grid-cols-2 w-full px-4 p-3 text-white rounded-md disabled:opacity-75 hover:opacity-80 transition-opacity 
+                  className={`bg-default-green grid grid-cols-2 w-full px-4 p-3 text-white rounded-lg disabled:opacity-75 hover:opacity-80 transition-opacity 
                     ${passo === 1 && "col-span-2"}`}
                   onClick={() => handlePassos("next")}
                   disabled={loading}

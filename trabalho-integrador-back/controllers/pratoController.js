@@ -104,6 +104,8 @@ export async function deletar(req, res) {
 }
 
 export async function atualizar(req, res) {
+  console.log(req.params, req.body);
+
   const { codprt } = req.params;
 
   var { nome, valor } = req.body;
