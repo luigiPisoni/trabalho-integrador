@@ -49,7 +49,6 @@ function ListarPedidos() {
   useEffect(() => {
     fetchPedidos();
   }, []);
-
   return (
     <>
       <Header />

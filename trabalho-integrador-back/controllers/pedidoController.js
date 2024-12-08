@@ -80,8 +80,7 @@ export async function lista(req, res) {
         pedido.pratos = pratos;
       } catch (innerError) {
         console.error(`Erro ao processar pedido ${pedido.codigo}:`, innerError);
-        // A cada erro de pedido, o sistema deve continuar a busca para os outros pedidos
-        pedido.error = "Erro ao processar dados relacionados ao pedido";
+ pedido.error = "Erro ao processar dados relacionados ao pedido";
       }
     }
 
@@ -363,9 +362,6 @@ export async function status(req, res) {
     const tabela = await database.query(
       "SELECT status, COUNT(*) as total FROM pedido WHERE DATE(datahora) = CURRENT_DATE GROUP BY status;"
     );
-
-    // Log para debug
-    console.log("Consulta status executada:", tabela);
 
     // Retorne os dados com a chave 'tabela'
     res.json({ tabela });
