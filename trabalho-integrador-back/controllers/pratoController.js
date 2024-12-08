@@ -30,9 +30,65 @@ export async function listaPrato(req, res) {
     res.status(400).json({ erro: "Erro ao listar os pratos" });
   }
 }
+export async function atualizar(req, res) {
+  const { codprt } = req.params;
+
+  let { nome, valor, ingredientes } = req.body;
+
+  if (valor && parseFloat(valor) < 0) {
+    return res.status(400).json({ mensagem: "O valor não pode ser negativo" });
+  }
+
+  try {
+    await database.tx(async (tx) => {
+      const pratoExistente = await tx.oneOrNone(
+        "SELECT nome, valor FROM prato WHERE codprt = $1;",
+        [codprt]
+      );
+      if (!pratoExistente) {
+        return res.status(404).json({ mensagem: "Prato não encontrado" });
+      }
+
+      nome = nome || pratoExistente.nome;
+      valor = valor || pratoExistente.valor;
+
+      await tx.none(
+        "UPDATE prato SET nome = $1, valor = $2 WHERE codprt = $3;",
+        [nome, valor, codprt]
+      );
+      await tx.none("DELETE FROM prato_ingrediente WHERE prato_codigo = $1;", [
+        codprt,
+      ]);
+
+      const inserirIngredientes = ingredientes.map(async (ingrediente) => {
+        const { nome, quantidade, unidade } = ingrediente;
+
+        const inserirIngrediente = await tx.one(
+          "INSERT INTO ingrediente (nome, unidade) VALUES ($1, $2) RETURNING *;",
+          [nome, unidade]
+        );
+
+        // Insere na tabela prato_ingrediente
+        await tx.none(
+          "INSERT INTO prato_ingrediente (prato_codigo, ingrediente_codigo, quantidade) VALUES ($1, $2, $3);",
+          [codprt, inserirIngrediente.codigo, quantidade]
+        );
+
+        return inserirIngrediente;
+      });
+
+      return tx.batch([...inserirIngredientes]);
+    });
+    res.status(200).json({ mensagem: "Prato atualizado com sucesso" });
+  } catch (error) {
+    // console.error("Erro ao atualizar prato:", error);
+    res
+      .status(500)
+      .json({ mensagem: "Erro no servidor ao tentar atualizar o prato" });
+  }
+}
+
 export async function novo(req, res) {
-  console.log(req.body);
-  // return;
   const { nome, valor, ingredientes } = req.body;
 
   // Validação inicial
@@ -58,22 +114,20 @@ export async function novo(req, res) {
 
       // Valida e insere os ingredientes
       const inserirIngredientes = ingredientes.map(async (ingrediente) => {
-        const { codigo, quantidade } = ingrediente;
+        const { nome, quantidade, unidade } = ingrediente;
 
-        const ingredienteExiste = await tx.oneOrNone(
-          "SELECT 1 FROM ingrediente WHERE codigo = $1;",
-          [codigo]
+        const inserirIngrediente = await tx.one(
+          "INSERT INTO ingrediente (nome, unidade) VALUES ($1, $2) RETURNING *;",
+          [nome, unidade]
         );
-
-        if (!ingredienteExiste) {
-          throw new Error(`Ingrediente com código ${codigo} não encontrado`);
-        }
 
         // Insere na tabela prato_ingrediente
-        return tx.none(
+        await tx.none(
           "INSERT INTO prato_ingrediente (prato_codigo, ingrediente_codigo, quantidade) VALUES ($1, $2, $3);",
-          [codprt, codigo, quantidade]
+          [codprt, inserirIngrediente.codigo, quantidade]
         );
+
+        return inserirIngrediente;
       });
 
       return tx.batch([criarPrato, ...inserirIngredientes]);
@@ -82,7 +136,7 @@ export async function novo(req, res) {
     // Resposta de sucesso
     res.status(201).json({ mensagem: "Prato cadastrado com sucesso" });
   } catch (error) {
-    console.error("Erro ao cadastrar prato:", error);
+    // console.error("Erro ao cadastrar prato:", error);
 
     // Trata erros de ingrediente não encontrado
     if (error.message.includes("Ingrediente com código")) {
@@ -116,41 +170,6 @@ export async function deletar(req, res) {
   }
 }
 
-export async function atualizar(req, res) {
-  console.log(req.params, req.body);
-
-  const { codprt } = req.params;
-
-  var { nome, valor } = req.body;
-
-  if (valor && parseFloat(valor) < 0) {
-    return res.status(400).json({ mensagem: "O valor não pode ser negativo" });
-  }
-
-  try {
-    const pratoExistente = await database.oneOrNone(
-      "SELECT nome, valor FROM prato WHERE codprt = $1;",
-      [codprt]
-    );
-    if (!pratoExistente) {
-      return res.status(404).json({ mensagem: "Prato não encontrado" });
-    }
-
-    nome = nome || pratoExistente.nome;
-    valor = valor || pratoExistente.valor;
-
-    await database.none(
-      "UPDATE prato SET nome = $1, valor = $2 WHERE codprt = $3;",
-      [nome, valor, codprt]
-    );
-    res.status(200).json({ mensagem: "Prato atualizado com sucesso" });
-  } catch (error) {
-    console.error("Erro ao atualizar prato:", error);
-    res
-      .status(500)
-      .json({ mensagem: "Erro no servidor ao tentar atualizar o prato" });
-  }
-}
 export async function add(req, res) {
   const { codprt } = req.params;
   const { ingredientes } = req.body;

@@ -1,15 +1,7 @@
 import { database } from "../db/banco.js";
 export async function novo(req, res) {
   try {
-    let {
-      cpf,
-      valor,
-      descricao,
-      tipoPagamento = "dinheiro",
-      produtos,
-      pratos,
-    } = req.body;
-
+    let { cpf, valor, descricao, tipoPagamento, produtos, pratos } = req.body;
     if (parseFloat(valor) < 0) {
       return res.status(400).json({
         mensagem: "Houve um erro ao cadastrar seu pedido",
@@ -54,7 +46,7 @@ export async function novo(req, res) {
 export async function lista(req, res) {
   try {
     const pedidos = await database.any(
-      "SELECT codigo, cpf, valor, datahora, descricao, status, tipo_pagamento FROM pedido;"
+      "SELECT codigo, cpf, valor, datahora, descricao, status, tipo_pagamento FROM pedido ORDER BY CASE status WHEN 'preparando' THEN 1 WHEN 'pendente' THEN 2 WHEN 'saiu_entrega' THEN 3 WHEN 'entregue' THEN 4 WHEN 'cancelado' THEN 5 ELSE 6 END;"
     );
 
     // Verifica se pedidos foram encontrados
@@ -86,7 +78,6 @@ export async function lista(req, res) {
 
         pedido.produtos = produtos;
         pedido.pratos = pratos;
-
       } catch (innerError) {
         console.error(`Erro ao processar pedido ${pedido.codigo}:`, innerError);
         // A cada erro de pedido, o sistema deve continuar a busca para os outros pedidos
@@ -95,7 +86,6 @@ export async function lista(req, res) {
     }
 
     res.status(200).json(pedidos);
-
   } catch (error) {
     console.error("Erro ao buscar os pedidos:", error);
     res.status(400).json({ mensagem: "Erro ao buscar os pedidos!" });
@@ -158,6 +148,23 @@ export async function atualizar(req, res) {
     res
       .status(500)
       .json({ mensagem: "Erro no servidor ao tentar atualizar o pedido" });
+  }
+}
+
+export async function atualizar_status(req, res) {
+  try {
+    const { codigo, novo_status } = req.body;
+    console.log(codigo, novo_status);
+
+    await database.none("UPDATE pedido SET status = $1 WHERE codigo = $2", [
+      novo_status,
+      codigo,
+    ]);
+
+    res.json({ mensagem: "Status atualizado" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ mensagem: "Erro ao atualizar o status do pedido" });
   }
 }
 export async function add_produto(req, res) {

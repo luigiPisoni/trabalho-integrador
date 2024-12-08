@@ -12,7 +12,8 @@ import {
   edita_prato,
   status,
   pedidosDoDia,
-  pedidosTotais
+  pedidosTotais,
+  atualizar_status,
 } from "../controllers/pedidoController.js";
 
 const pedidoRouter = express.Router();
@@ -20,6 +21,8 @@ const pedidoRouter = express.Router();
 pedidoRouter.get("/lista", lista);
 
 pedidoRouter.delete("/deletar/:codigo", deletar);
+
+pedidoRouter.put("/atualizar-status", atualizar_status);
 
 pedidoRouter.put("/atualizar/:codigo", atualizar);
 
@@ -41,9 +44,9 @@ pedidoRouter.put("/atualizar/rem/prato/:codprt", remove_prato);
 // editar quantidade de pratos
 pedidoRouter.put("/atualizar/edit/prato/:codprt", edita_prato);
 
-pedidoRouter.get('/status', status);
+pedidoRouter.get("/status", status);
 
-pedidoRouter.get('/dia', pedidosDoDia);
+pedidoRouter.get("/dia", pedidosDoDia);
 
-pedidoRouter.get('/totais', pedidosTotais);
+pedidoRouter.get("/totais", pedidosTotais);
 export default pedidoRouter;

@@ -17,6 +17,7 @@ function NovoPedido() {
   const [carrinho, setCarrinho] = useState([]);
   const [valorTotal, setValorTotal] = useState(0);
   const [descricao, setDescricao] = useState("");
+  const [pagamento, setPagamento] = useState("dinheiro");
 
   const getLista = async (tabela) => {
     try {
@@ -44,6 +45,7 @@ function NovoPedido() {
       let data = {
         valor: pedido.valor,
         descricao: pedido.descricao,
+        tipoPagamento: pedido.tipoPagamento,
         cpf: localStorage.getItem("cpf"),
         produtos: [],
         pratos: [],
@@ -96,6 +98,7 @@ function NovoPedido() {
           itens: carrinho,
           valor: valorTotal,
           descricao,
+          tipoPagamento: pagamento,
         };
 
         setLoading(true);
@@ -130,43 +133,38 @@ function NovoPedido() {
       valor: item.valor,
       qnt: item.qnt,
     };
-  
+
     // Condiciona o tipo de produto ou prato
     if (item.codprt < 0) {
       novoItem.codpdt = item.codpdt;
     } else {
       novoItem.codprt = item.codprt;
     }
-  
+
     // Verifica se o item já existe no carrinho
     const indexItemExistente = carrinho.findIndex(
       (produto) =>
         (produto.codpdt && produto.codpdt === item.codpdt) ||
         (produto.codprt && produto.codprt === item.codprt)
     );
-  
+
     if (indexItemExistente !== -1) {
       // Se o item já existe, apenas atualiza a quantidade e o valor total
       let carrinhoAtualizado = [...carrinho];
       carrinhoAtualizado[indexItemExistente].qnt += item.qnt;
       setCarrinho(carrinhoAtualizado);
-  
+
       // Atualiza o valor total
-      setValorTotal(
-        valorTotal + item.valor * item.qnt
-      );
+      setValorTotal(valorTotal + item.valor * item.qnt);
     } else {
       // Se o item não existe, adiciona um novo item
       let carrinhoAtualizado = [...carrinho, novoItem];
       setCarrinho(carrinhoAtualizado);
-  
+
       // Atualiza o valor total
-      setValorTotal(
-        valorTotal + item.valor * item.qnt
-      );
+      setValorTotal(valorTotal + item.valor * item.qnt);
     }
   };
-  
 
   const removeCarrinho = (item) => {
     let carrinhoAtualizado = [];
@@ -206,20 +204,38 @@ function NovoPedido() {
               {passo === 3 ? (
                 // caso passo === 3, vai renderizar o textfield
                 <div>
-                  <label
-                    htmlFor="custom-textfield"
-                    className="block font-bold mb-2"
-                  >
+                  <label htmlFor="descricao" className="block font-bold mb-2">
                     Descrição do pedido (opcional):
                   </label>
                   <textarea
-                    id="custom-textfield"
+                    id="descricao"
                     type="text"
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
                     className="border-2 rounded-lg p-2 w-full h-fit"
                     placeholder="Ex: sem carne, mais cebola..."
                   />
+                  <div class="flex flex-col gap-2">
+                    <label for="opcoes" class="text-sm font-medium">
+                      Escolha uma opção de pagamento
+                    </label>
+                    <select
+                      name="pagamento"
+                      class="block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      value={pagamento}
+                      onChange={(e) => {
+                        // console.log(e.target.value);
+
+                        setPagamento(e.target.value);
+                      }}
+                    >
+                      <option value="dinheiro">Dinheiro</option>
+                      <option value="pix">Pix</option>
+                      <option value="cartao_debito">Cartão de débito</option>
+                      <option value="cartao_credito">Cartão de crédito</option>
+                      <option value="outro">Outro</option>
+                    </select>
+                  </div>
                 </div>
               ) : (
                 listaItens.map((item) => {
