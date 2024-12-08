@@ -1,7 +1,6 @@
 import express from "express";
 import { database } from "../db/banco.js";
 import {
-  novo,
   lista,
   deletar,
   atualizar,
