@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Card from "../../components/Card";
@@ -9,7 +8,8 @@ import server from "../../server";
 
 function Controle() {
   const [loading, setLoading] = useState(true);
-  const [pagina, setPagina] = useState("pratos"); // Alternar entre pratos e produtos
+  const [pagina, setPagina] = useState("pratos");
+  const [action, setAction] = useState("novo");
   const [modal, setModal] = useState({
     open: false,
     titulo: "",
@@ -17,7 +17,7 @@ function Controle() {
     codpdt: null,
     nome: "",
     valor: 0,
-    ingredientes: [],
+    ingredientes: [{}],
   });
   const [itens, setItens] = useState([]);
 
@@ -38,10 +38,25 @@ function Controle() {
   const handleSubmit = async (item) => {
     try {
       const tabela = pagina === "pratos" ? "prato" : "produto";
-      const id = item.codprt || item.codpdt;
-      await server.put(`/${tabela}/atualizar/${id}`, item);
-      toast(`${pagina === "pratos" ? "Prato" : "Produto"} atualizado com sucesso!`);
-      getLista(); // Atualizar lista após submissão
+      let response;
+      if (action === "novo") {
+        console.log(item);
+
+        response = await server.post(`/${tabela}/novo`, item);
+        setModal({ ...modal, open: false });
+        toast(
+          `${pagina === "pratos" ? "Prato" : "Produto"} criado com sucesso!`
+        );
+        getLista();
+      } else if (action == "atualizar") {
+        const id = item.codprt || item.codpdt;
+        response = await server.put(`/${tabela}/atualizar/${id}`, item);
+        setModal({ ...modal, open: false });
+        toast(
+          `${pagina === "pratos" ? "Prato" : "Produto"} atualizado com sucesso!`
+        );
+        getLista();
+      }
     } catch (erro) {
       console.error(erro);
       toast(`Erro ao atualizar o ${pagina}.`);
@@ -55,18 +70,24 @@ function Controle() {
   return (
     <>
       <Header />
-      <PageHeader titulo={`Controle de ${pagina === "pratos" ? "Pratos" : "Produtos"}`} />
+      <PageHeader
+        titulo={`Controle de ${pagina === "pratos" ? "Pratos" : "Produtos"}`}
+      />
       <div className="px-24 py-8">
         <div className="flex space-x-4 mb-6">
           <button
             onClick={() => setPagina("pratos")}
-            className={`btn ${pagina === "pratos" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn ${
+              pagina === "pratos" ? "btn-primary" : "btn-secondary"
+            }`}
           >
             Controle de Pratos
           </button>
           <button
             onClick={() => setPagina("produtos")}
-            className={`btn ${pagina === "produtos" ? "btn-primary" : "btn-secondary"}`}
+            className={`btn ${
+              pagina === "produtos" ? "btn-primary" : "btn-secondary"
+            }`}
           >
             Controle de Produtos
           </button>
@@ -87,24 +108,31 @@ function Controle() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {itens.map((item) => {
-              const ingredientes = item.ingredientes?.map((i) => i.nome).join(", ") || "";
+              const ingredientes =
+                item.ingredientes?.map((i) => i.nome).join(", ") || "";
 
               return (
                 <Card
                   key={item.codprt || item.codpdt}
                   nome={item.nome}
                   valor={item.valor}
-                  descricao={pagina === "pratos" ? ingredientes : item.descricao || ""}
+                  descricao={
+                    pagina === "pratos" ? ingredientes : item.descricao || ""
+                  }
                   onClick={() => {
                     setModal({
                       open: true,
-                      titulo: `Editar ${pagina === "pratos" ? "Prato" : "Produto"}`,
+                      titulo: `Editar ${
+                        pagina === "pratos" ? "prato" : "produto"
+                      }`,
                       codprt: pagina === "pratos" ? item.codprt : null,
                       codpdt: pagina === "produtos" ? item.codpdt : null,
                       nome: item.nome,
                       valor: item.valor,
-                      ingredientes: item.ingredientes || [],
+                      ingredientes:
+                        pagina == "prato" ? item.ingredientes || [{}] : [],
                     });
+                    setAction("atualizar");
                   }}
                 />
               );
@@ -113,13 +141,14 @@ function Controle() {
               onClick={() => {
                 setModal({
                   open: true,
-                  titulo: `Novo ${pagina === "pratos" ? "Prato" : "Produto"}`,
+                  titulo: `Novo ${pagina === "pratos" ? "prato" : "produto"}`,
                   codprt: null,
                   codpdt: null,
                   nome: "",
                   valor: 0,
-                  ingredientes: [],
+                  ingredientes: pagina === "pratos" ? [{}] : [],
                 });
+                setAction("novo");
               }}
             />
           </div>
@@ -130,4 +159,3 @@ function Controle() {
 }
 
 export default Controle;
-

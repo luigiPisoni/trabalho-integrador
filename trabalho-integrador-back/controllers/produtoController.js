@@ -12,6 +12,9 @@ export async function listaProduto(req, res) {
   }
 }
 export async function novo(req, res) {
+  console.log(req.body);
+
+  // return;
   const { nome, valor } = req.body;
 
   if (parseFloat(valor) < 0) {

@@ -11,7 +11,7 @@ function Modal({
   valor,
   ingredientes,
 }) {
-  //   console.log(nome, valor, ingredientes);
+  // console.log(nome, valor);
 
   const [item, setItem] = useState({
     codpdt,
@@ -37,6 +37,19 @@ function Modal({
       ...novoIngredientes[i],
       [campo]: valor,
     };
+
+    if (codprt !== null && i === item.ingredientes.length - 1) {
+      const ultimoIngrediente = novoIngredientes[i];
+      if (
+        ultimoIngrediente.quantidade &&
+        ultimoIngrediente.unidade &&
+        ultimoIngrediente.nome
+      ) {
+        // Adiciona uma nova linha vazia
+        novoIngredientes.push({});
+      }
+    }
+
     setItem({ ...item, ingredientes: novoIngredientes });
   };
 
@@ -53,7 +66,7 @@ function Modal({
             <input
               className="px-4 py-2 rounded-lg border-2 col-span-3"
               type="text"
-              placeholder="Nome do prato"
+              placeholder="Nome"
               value={item.nome}
               onChange={(e) => {
                 setItem({ ...item, nome: e.target.value });

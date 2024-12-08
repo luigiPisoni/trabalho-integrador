@@ -20,6 +20,8 @@ export async function listaPrato(req, res) {
   }
 }
 export async function novo(req, res) {
+  console.log(req.body);
+  // return;
   const { nome, valor, ingredientes } = req.body;
 
   // Validação inicial

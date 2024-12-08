@@ -8,7 +8,7 @@ import {
 
 const produtoRouter = express.Router();
 
-produtoRouter.get("/lista", listaProduto);
+// produtoRouter.get("/lista", listaProduto);
 
 produtoRouter.post("/novo", novo);
 
