@@ -4,10 +4,9 @@ import { database } from "../db/banco.js";
 export async function destaques(req, res) {
   try {
     const pratos = await database.any(
-      "SELECT p.* FROM prato p JOIN pedido_prato pp ON p.codprt = pp.prato_codigo GROUP BY p.codprt LIMIT 5;"
+      "SELECT p.* FROM prato p JOIN pedido_prato pp ON p.codprt = pp.prato_codigo GROUP BY p.codprt LIMIT 4;"
     );
-    console.log();
-    res.send();
+    res.json(pratos);
   } catch (error) {
     res.status(400).json({ mensagem: "Erro ao listar os pratos em destaque " });
   }

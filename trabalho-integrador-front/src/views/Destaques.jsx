@@ -10,7 +10,7 @@ function Destaques() {
 
   const getLista = async () => {
     try {
-      const response = await server.get(`/lista-prato`);
+      const response = await server.get(`/destaques`);
       setPratos(response.data);
     } catch (erro) {
       console.error(erro);
