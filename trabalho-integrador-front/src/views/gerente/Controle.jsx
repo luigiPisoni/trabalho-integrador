@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Card from "../../components/Card";
@@ -8,101 +9,125 @@ import server from "../../server";
 
 function Controle() {
   const [loading, setLoading] = useState(true);
+  const [pagina, setPagina] = useState("pratos"); // Alternar entre pratos e produtos
   const [modal, setModal] = useState({
     open: false,
-    titulo: "Novo prato",
-    codpdt: null,
+    titulo: "",
     codprt: null,
+    codpdt: null,
     nome: "",
     valor: 0,
-    ingredientes: [{}],
+    ingredientes: [],
   });
-
   const [itens, setItens] = useState([]);
 
-  const getLista = async (tabela) => {
+  const getLista = async () => {
     try {
       setLoading(true);
+      const tabela = pagina === "pratos" ? "prato" : "produto";
       const response = await server.get(`/lista-${tabela}`);
-
       setItens(response.data);
       setLoading(false);
     } catch (erro) {
-      console.log(erro);
-      toast("Erro ao listar os itens.");
+      console.error(erro);
+      toast(`Erro ao listar os ${pagina}.`);
       setLoading(false);
     }
   };
 
   const handleSubmit = async (item) => {
-    console.log(item);
-    const response = await server.put(
-      `/prato/atualizar/${item.codprt || item.codpdt}`,
-      item
-    );
+    try {
+      const tabela = pagina === "pratos" ? "prato" : "produto";
+      const id = item.codprt || item.codpdt;
+      await server.put(`/${tabela}/atualizar/${id}`, item);
+      toast(`${pagina === "pratos" ? "Prato" : "Produto"} atualizado com sucesso!`);
+      getLista(); // Atualizar lista após submissão
+    } catch (erro) {
+      console.error(erro);
+      toast(`Erro ao atualizar o ${pagina}.`);
+    }
   };
 
   useEffect(() => {
-    getLista("prato");
-  }, []);
+    getLista();
+  }, [pagina]);
 
   return (
     <>
       <Header />
-      <PageHeader titulo={"Controle de pratos"} />
-      <Modal
-        open={modal.open}
-        close={() => {
-          setModal(false);
-        }}
-        titulo={modal.titulo}
-        codpdt={modal.codpdt}
-        codprt={modal.codprt}
-        nome={modal.nome}
-        valor={modal.valor}
-        ingredientes={modal.ingredientes}
-        handleSubmit={handleSubmit}
-      />
+      <PageHeader titulo={`Controle de ${pagina === "pratos" ? "Pratos" : "Produtos"}`} />
       <div className="px-24 py-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {itens.map((item) => {
-            let ingredientes = [];
-
-            if ("ingredientes" in item) {
-              for (const ingrediente of item.ingredientes) {
-                ingredientes.push(ingrediente.nome);
-              }
-            }
-
-            return (
-              <Card
-                key={item.codprt || item.codprt}
-                nome={item.nome}
-                valor={item.valor}
-                // ingredientes={ingredientes.join(", ") || []}
-                onClick={() => {
-                  setModal({
-                    open: true,
-                    titulo: "Editar prato",
-                    codprt: item.codprt || null,
-                    codpdt: item.codpdt || null,
-                    nome: item.nome,
-                    valor: item.valor,
-                    ingredientes: item.ingredientes,
-                  });
-                }}
-              />
-            );
-          })}
-          <Card
-            onClick={() => {
-              setModal({ open: true, titulo: "Novo prato" });
-            }}
-          />
+        <div className="flex space-x-4 mb-6">
+          <button
+            onClick={() => setPagina("pratos")}
+            className={`btn ${pagina === "pratos" ? "btn-primary" : "btn-secondary"}`}
+          >
+            Controle de Pratos
+          </button>
+          <button
+            onClick={() => setPagina("produtos")}
+            className={`btn ${pagina === "produtos" ? "btn-primary" : "btn-secondary"}`}
+          >
+            Controle de Produtos
+          </button>
         </div>
+        <Modal
+          open={modal.open}
+          close={() => setModal({ ...modal, open: false })}
+          titulo={modal.titulo}
+          codprt={modal.codprt}
+          codpdt={modal.codpdt}
+          nome={modal.nome}
+          valor={modal.valor}
+          ingredientes={modal.ingredientes}
+          handleSubmit={handleSubmit}
+        />
+        {loading ? (
+          <p>Carregando...</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {itens.map((item) => {
+              const ingredientes = item.ingredientes?.map((i) => i.nome).join(", ") || "";
+
+              return (
+                <Card
+                  key={item.codprt || item.codpdt}
+                  nome={item.nome}
+                  valor={item.valor}
+                  descricao={pagina === "pratos" ? ingredientes : item.descricao || ""}
+                  onClick={() => {
+                    setModal({
+                      open: true,
+                      titulo: `Editar ${pagina === "pratos" ? "Prato" : "Produto"}`,
+                      codprt: pagina === "pratos" ? item.codprt : null,
+                      codpdt: pagina === "produtos" ? item.codpdt : null,
+                      nome: item.nome,
+                      valor: item.valor,
+                      ingredientes: item.ingredientes || [],
+                    });
+                  }}
+                />
+              );
+            })}
+            <Card
+              onClick={() => {
+                setModal({
+                  open: true,
+                  titulo: `Novo ${pagina === "pratos" ? "Prato" : "Produto"}`,
+                  codprt: null,
+                  codpdt: null,
+                  nome: "",
+                  valor: 0,
+                  ingredientes: [],
+                });
+              }}
+            />
+          </div>
+        )}
       </div>
     </>
   );
 }
 
 export default Controle;
+

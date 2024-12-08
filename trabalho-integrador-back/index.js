@@ -33,6 +33,5 @@ server.use(verificaGerencia);
 server.use("/lucro", lucroRoute);
 server.use("/prato", pratoRoute);
 server.use("/produto", produtoRoute);
-
 server.use("/pessoa", pessoaRoute);
 server.use("/ingrediente", ingredienteRoute);

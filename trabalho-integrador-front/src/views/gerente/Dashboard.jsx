@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import PageHeader from "../../components/PageHeader";
 import server from "../../server";
-import { Line } from "react-chartjs-2";
+import { Line,Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   LineElement,
@@ -73,47 +73,46 @@ function Dashboard() {
     // Buscar dados do backend
     const fetchPedido = async () => {
       try {
-        const response = await server.get('/pedido/status'); // Endpoint de pedidos por status
-        console.log(response.data);
-        // Converte os valores de 'total' para números
-        const labels = response.data.map((item) => item.status);
-        const totalPedidos = response.data.map((item) => parseInt(item.total, 10));
-        console.log('Labels:', labels);  // Verifique as labels 
-        console.log('Total de pedidos:', totalPedidos);
-        // Atualizar os dados do gráfico
+        const response = await server.get('/pedido/status');
+        const labels = response.data.tabela.map((item) => item.status);
+        const totalPedidos = response.data.tabela.map((item) => parseInt(item.total, 10));
         setChartPedidos({
           labels: labels,
-          datasets: [
-            {
-              label: 'Pedidos por Status',
-              data: totalPedidos,
-              backgroundColor: [
-                'rgba(76, 175, 80, 0.5)',
-                'rgba(255, 152, 0, 0.5)',
-                'rgba(33, 150, 243, 0.5)',
-                'rgba(244, 67, 54, 0.5)',
-                'rgba(158, 158, 158, 0.5)',
-              ],
-              borderColor: [
-                'rgba(76, 175, 80, 1)',
-                'rgba(255, 152, 0, 1)',
-                'rgba(33, 150, 243, 1)',
-                'rgba(244, 67, 54, 1)',
-                'rgba(158, 158, 158, 1)',
-              ],
-              borderWidth: 1,
-            },
-          ],
-        });
+  datasets: [
+    {
+      label: 'Pedidos por Status',
+      data: totalPedidos,
+      backgroundColor: [
+        'rgba(76, 175, 80, 0.5)',  // Cor para 'entregue'
+        'rgba(255, 152, 0, 0.5)',   // Cor para 'pendente'
+        'rgba(33, 150, 243, 0.5)',  // Cor para outros status (caso necessário)
+        'rgba(244, 67, 54, 0.5)',   // Outra cor, por exemplo
+        'rgba(158, 158, 158, 0.5)', // Cor neutra, como 'cancelado'
+      ],
+      borderColor: [
+        'rgba(76, 175, 80, 1)',  // Cor para 'entregue'
+        'rgba(255, 152, 0, 1)',   // Cor para 'pendente'
+        'rgba(33, 150, 243, 1)',  // Cor para outros status (caso necessário)
+        'rgba(244, 67, 54, 1)',   // Outra cor, por exemplo
+        'rgba(158, 158, 158, 1)', // Cor neutra, como 'cancelado'
+      ],
+      borderWidth: 1,
+      // A propriedade 'fill' é usada para gráficos de linha, mas para barra não precisa
+      fill: false,
+    },
+  ],
+});
+  
         setIsLoadingP(false); // Atualiza o estado para mostrar o gráfico
       } catch (error) {
-        console.log("Erro ao buscar os dados do gráfico:", error.message);
+        console.error('Erro ao buscar os dados do gráfico:', error.message);
         setIsLoadingP(false); // Atualiza o estado mesmo se ocorrer um erro
       }
     };
-
+  
     fetchPedido();
   }, []);
+  
   const fetchPedidosDia = async () => {
     try {
       const response = await server.get('/pedido/dia');  // Novo endpoint para pedidos do dia
@@ -211,7 +210,7 @@ function Dashboard() {
             {isLoadingP ? (
               <p aria-live="polite">Carregando dados...</p> // Acessibilidade com 'aria-live'
             ) : chartPedidos ? (
-              <Line data={chartPedidos} options={chartOptions} />
+              <Bar data={chartPedidos} options={chartOptions} />
             ) : (
               <p className="text-red-500">Erro ao carregar dados.</p> // Mensagem de erro com cor diferenciada
             )}

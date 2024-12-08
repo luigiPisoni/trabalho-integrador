@@ -33,10 +33,10 @@ function Header() {
             Dashboard
           </a>
           <a href="/controle" className="hover:font-semibold transition-all">
-            Pratos
+            Controle
           </a>
-          <a href="/controle" className="hover:font-semibold transition-all">
-            Produtos
+          <a href="/listarPedidos" className="hover:font-semibold transition-all">
+            Listar Pedidos
           </a>
         </div>
       )}

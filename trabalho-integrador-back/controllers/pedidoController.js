@@ -341,7 +341,7 @@ export async function status(req, res) {
   try {
     // Consulta SQL para contar pedidos por status
     const tabela = await database.query(
-      "SELECT status, COUNT(*) as total FROM pedido GROUP BY status;"
+      "SELECT status, COUNT(*) as total FROM pedido WHERE DATE(datahora) = CURRENT_DATE GROUP BY status;"
     );
 
     // Log para debug
