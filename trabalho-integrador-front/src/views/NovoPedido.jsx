@@ -21,8 +21,7 @@ function NovoPedido() {
   const getLista = async (tabela) => {
     try {
       setLoading(true);
-      const response = await server.get(`/${tabela}/lista`);
-      // console.log(response.data);
+      const response = await server.get(`/lista-${tabela}`);
 
       setListaItens(response.data);
       setLoading(false);
@@ -30,6 +29,10 @@ function NovoPedido() {
       console.log(erro);
       toast("Erro ao listar os itens.");
       setLoading(false);
+
+      if (erro.status === 401) {
+        window.location.href = "/login";
+      }
     }
   };
 
@@ -37,13 +40,35 @@ function NovoPedido() {
     try {
       setLoading(true);
 
-      const response = await server.post("/pedido/novo", pedido);
+      console.log(pedido);
+      let data = {
+        valor: pedido.valor,
+        descricao: pedido.descricao,
+        cpf: localStorage.getItem("cpf"),
+        produtos: [],
+        pratos: [],
+      };
+
+      for (const item of pedido.itens) {
+        if (item.codprt) {
+          data.pratos.push(item);
+        } else {
+          data.produtos.push(item);
+        }
+      }
+
+      const response = await server.post("/novo-pedido", data);
       toast(response.data.mensagem);
+
       window.location.href = "/";
     } catch (erro) {
       console.log(erro);
-      toast(erro);
+      toast(erro.mensagem);
       setLoading(false);
+
+      if (erro.status === 401) {
+        window.location.href = "/login";
+      }
     }
   };
 

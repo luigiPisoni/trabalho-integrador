@@ -13,8 +13,8 @@ function Controle() {
   const getLista = async (tabela) => {
     try {
       setLoading(true);
-      const response = await server.get(`/${tabela}/lista`);
-      console.log(response.data);
+      const response = await server.get(`/lista/${tabela}`);
+      // console.log(response.data);
 
       setItens(response.data);
       setLoading(false);

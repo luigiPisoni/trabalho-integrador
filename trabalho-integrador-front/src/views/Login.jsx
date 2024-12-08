@@ -24,6 +24,9 @@ function Login() {
 
       toast.success(response.data.mensagem);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("cpf", response.data.cpf);
+      localStorage.setItem("cargo", response.data.cargo);
+
       window.location.href = "/";
     } catch (error) {
       // console.log(error.response.data.mensagem);

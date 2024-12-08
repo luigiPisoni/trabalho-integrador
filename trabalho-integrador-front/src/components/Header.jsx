@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
 
 function Header() {
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
+  useEffect(() => {
+    const cargo = localStorage.getItem("cargo");
 
+    if (localStorage.getItem("token")) {
+      setIsLogged(true);
+    }
+
+    if (cargo == "true") {
+      setIsAdmin(true);
+    }
+  }, []);
   return (
     <header className="px-8 md:px-24 py-4 sm:py-7 sticky flex w-full top-0 z-50 items-center gap-6 md:gap-12 bg-white ">
       <div className="flex">
@@ -28,10 +40,22 @@ function Header() {
           </a>
         </div>
       )}
-      <div>
-        <a href="/login" className="hover:font-semibold transition-all">
-          Login
-        </a>
+      <div className={!isAdmin && "ml-auto"}>
+        {isLogged ? (
+          <a
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = "/";
+            }}
+            className="hover:font-semibold hover:cursor-pointer transition-all"
+          >
+            Sair
+          </a>
+        ) : (
+          <a href="/login" className="hover:font-semibold transition-all">
+            Login
+          </a>
+        )}
       </div>
       <div>
         <a
