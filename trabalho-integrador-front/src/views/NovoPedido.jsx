@@ -124,25 +124,49 @@ function NovoPedido() {
 
   // item = {nome, valor, qnt}
   const adicionaCarrinho = (item) => {
-    // não dá pra modificar carrinho, só definir um novo valor.
-
+    // Cria um novo item para adicionar ao carrinho
     let novoItem = {
       nome: item.nome,
       valor: item.valor,
       qnt: item.qnt,
     };
-
+  
+    // Condiciona o tipo de produto ou prato
     if (item.codprt < 0) {
       novoItem.codpdt = item.codpdt;
     } else {
       novoItem.codprt = item.codprt;
     }
-
-    let carrinhoAtualizado = [...carrinho, novoItem];
-
-    setCarrinho(carrinhoAtualizado);
-    setValorTotal(valorTotal + item.valor * item.qnt);
+  
+    // Verifica se o item já existe no carrinho
+    const indexItemExistente = carrinho.findIndex(
+      (produto) =>
+        (produto.codpdt && produto.codpdt === item.codpdt) ||
+        (produto.codprt && produto.codprt === item.codprt)
+    );
+  
+    if (indexItemExistente !== -1) {
+      // Se o item já existe, apenas atualiza a quantidade e o valor total
+      let carrinhoAtualizado = [...carrinho];
+      carrinhoAtualizado[indexItemExistente].qnt += item.qnt;
+      setCarrinho(carrinhoAtualizado);
+  
+      // Atualiza o valor total
+      setValorTotal(
+        valorTotal + item.valor * item.qnt
+      );
+    } else {
+      // Se o item não existe, adiciona um novo item
+      let carrinhoAtualizado = [...carrinho, novoItem];
+      setCarrinho(carrinhoAtualizado);
+  
+      // Atualiza o valor total
+      setValorTotal(
+        valorTotal + item.valor * item.qnt
+      );
+    }
   };
+  
 
   const removeCarrinho = (item) => {
     let carrinhoAtualizado = [];
