@@ -24,6 +24,7 @@ server.listen(port, () => {
 });
 
 server.use("/", publicRoute);
+server.use("/pedido", pedidoRoute);
 // as rotas daqui pora baixo vai precisa do token
 server.use(verificarToken);
 server.use("/", clienteRouter);
@@ -32,6 +33,6 @@ server.use(verificaGerencia);
 server.use("/lucro", lucroRoute);
 server.use("/prato", pratoRoute);
 server.use("/produto", produtoRoute);
-server.use("/pedido", pedidoRoute);
+
 server.use("/pessoa", pessoaRoute);
 server.use("/ingrediente", ingredienteRoute);

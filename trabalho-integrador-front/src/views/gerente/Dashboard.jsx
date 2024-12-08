@@ -16,20 +16,21 @@ import {
 } from "chart.js";
 
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement,BarElement,Title, Tooltip, Legend);
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
 function Dashboard() {
   const [chartData, setChartData] = useState(null); // Dados do gráfico
   const [isLoading, setIsLoading] = useState(true); // Estado de carregamento
+  const [totalPedidosDia, setTotalPedidosDia] = useState(0);
 
   useEffect(() => {
     // Buscar dados do back-end
     const fetchData = async () => {
       try {
-        const response = await server.get('/lucro/diario'); 
+        const response = await server.get('/lucro/diario');
         const labels = response.data.lucro.map((item) => {
           // Garantir que as datas estão no formato correto (dia-mês-ano)
-          return new Date(item.data).toLocaleDateString('pt-BR'); 
+          return new Date(item.data).toLocaleDateString('pt-BR');
         });
 
         const receitas = response.data.lucro.map((item) => item.total);
@@ -64,7 +65,7 @@ function Dashboard() {
 
     fetchData();
   }, []);
-  
+
   const [chartPedidos, setChartPedidos] = useState(null); // Dados do gráfico
   const [isLoadingP, setIsLoadingP] = useState(true); // Estado de carregamento
 
@@ -74,12 +75,11 @@ function Dashboard() {
       try {
         const response = await server.get('/pedido/status'); // Endpoint de pedidos por status
         console.log(response.data);
-        // Processamento dos dados para o gráfico
-        const labels = response.data.status.map(item => item.status); // Status dos pedidos
-        const totalPedidos = response.data.status.map(item => item.total); // Total de pedidos por status
-
-        console.log('Labels:', labels);  // Verifique as labels
-        console.log('Total de pedidos:', totalPedidos);  
+        // Converte os valores de 'total' para números
+        const labels = response.data.map((item) => item.status);
+        const totalPedidos = response.data.map((item) => parseInt(item.total, 10));
+        console.log('Labels:', labels);  // Verifique as labels 
+        console.log('Total de pedidos:', totalPedidos);
         // Atualizar os dados do gráfico
         setChartPedidos({
           labels: labels,
@@ -107,12 +107,61 @@ function Dashboard() {
         });
         setIsLoadingP(false); // Atualiza o estado para mostrar o gráfico
       } catch (error) {
-        console.error('Erro ao buscar os dados do gráfico:', error.message);
+        console.log("Erro ao buscar os dados do gráfico:", error.message);
         setIsLoadingP(false); // Atualiza o estado mesmo se ocorrer um erro
       }
     };
 
     fetchPedido();
+  }, []);
+  const fetchPedidosDia = async () => {
+    try {
+      const response = await server.get('/pedido/dia');  // Novo endpoint para pedidos do dia
+      const totalPedidosDia = response.data.totalPedidos;  // O total de pedidos retornado do backend
+      console.log('Total de pedidos do dia:', totalPedidosDia);
+      setTotalPedidosDia(totalPedidosDia);  // Atualiza o estado para mostrar o contador
+
+    } catch (error) {
+      console.log("Erro ao buscar os pedidos do dia:", error.message);
+    }
+  };
+
+  // Chama a função ao carregar o componente
+  useEffect(() => {
+    fetchPedidosDia();
+  }, []);
+  const [totalPedidosTotais, setTotalPedidosTotais] = useState(0);
+  const fetchPedidosTotais = async () => {
+    try {
+      const response = await server.get('/pedido/totais');  // Novo endpoint para pedidos totais
+      const totalPedidosTotais = response.data.totalPedidos;  // O total de pedidos retornado do backend
+      console.log('Total de pedidos totais:', totalPedidosTotais);
+      setTotalPedidosTotais(totalPedidosTotais);  // Atualiza o estado para mostrar o contador
+    } catch (error) {
+      console.log("Erro ao buscar os pedidos totais:", error.message);
+    }
+  };
+
+  // Chama a função ao carregar o componente
+  useEffect(() => {
+    fetchPedidosTotais();
+  }, []);
+  const [totalClientesRegistrados, setTotalClientesRegistrados] = useState(0);
+
+  const fetchClientesRegistrados = async () => {
+    try {
+      const response = await server.get('/pessoa/totalClientes');
+      const totalClientesRegistrados = response.data.totalClientes;
+      console.log('Total de clientes registrados:', totalClientesRegistrados);
+      setTotalClientesRegistrados(totalClientesRegistrados);
+    } catch (error) {
+      console.log("Erro ao buscar os clientes registrados:", error.message);
+    }
+  };
+
+  // Chama a função ao carregar o componente
+  useEffect(() => {
+    fetchClientesRegistrados();
   }, []);
 
   // Configurações do gráfico
@@ -135,22 +184,23 @@ function Dashboard() {
 
   return (
     <>
-    
+
       <Header />
       <PageHeader titulo={"Dashboard"} />
       <div className="px-24 py-8">
         <div className="grid grid-cols-3 gap-6">
           <div className="bg-light-green border border-gray-200 rounded-lg shadow p-4 text-center">
             <h3 className="uppercase text-lg font-semibold">Pedidos do Dia</h3>
-            <p className="">1337</p>
+            <p>{totalPedidosDia}</p>
           </div>
           <div className="bg-light-green border border-gray-200 rounded-lg shadow p-4 text-center">
             <h3 className="uppercase text-lg font-semibold">Pedidos Totais</h3>
-            <p className="">1337</p>
+            <p>{totalPedidosTotais}</p>
           </div>
           <div className="bg-light-green border border-gray-200 rounded-lg shadow p-4 text-center">
             <h3 className="uppercase text-lg font-semibold">Clientes Registrados</h3>
-            <p className="">1337</p>
+            <p>{totalClientesRegistrados}</p>
+
           </div>
         </div>
 
@@ -159,11 +209,11 @@ function Dashboard() {
           <div className="bg-light-green border border-gray-200 rounded-lg shadow p-8">
             <h3 className="text-lg font-semibold mb-4">Pedidos por Status</h3>
             {isLoadingP ? (
-              <p>Carregando dados...</p>
+              <p aria-live="polite">Carregando dados...</p> // Acessibilidade com 'aria-live'
             ) : chartPedidos ? (
-              <Line data={setChartPedidos} options={chartOptions} />
+              <Line data={chartPedidos} options={chartOptions} />
             ) : (
-              <p>Erro ao carregar dados.</p>
+              <p className="text-red-500">Erro ao carregar dados.</p> // Mensagem de erro com cor diferenciada
             )}
           </div>
           {/* Gráfico de Receitas do Dia */}

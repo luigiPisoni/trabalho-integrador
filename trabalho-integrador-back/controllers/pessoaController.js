@@ -154,3 +154,17 @@ export async function deletar(req, res) {
     res.status(500).json({ mensagem: "Erro ao tentar deletar a pessoa." });
   }
 }
+export async function clientesRegistrados(req, res) {
+  try {
+    // Consulta para contar todos os clientes registrados
+    const tabela = await database.query(
+      "SELECT COUNT(*) as total FROM pessoa WHERE cargo = FALSE;"
+    );
+
+    // Envia o total de clientes
+    res.json({ totalClientes: tabela[0].total });
+  } catch (error) {
+    console.error("Erro na consulta SQL:", error);
+    res.status(500).json({ error: "Erro ao acessar o banco de dados." });
+  }
+}

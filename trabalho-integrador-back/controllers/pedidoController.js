@@ -344,22 +344,42 @@ export async function status(req, res) {
       "SELECT status, COUNT(*) as total FROM pedido GROUP BY status;"
     );
 
-    // Processamento de dados com tratamento de erros
-    const formattedData = tabela
-      .map((row) => {
-        try {
-          return {
-            status: row.status,
-            total: parseInt(row.total, 10),
-          };
-        } catch (error) {
-          console.error("Erro ao formatar os dados da linha:", row, error);
-          return null; // Retorna null para as linhas que falharem
-        }
-      })
-      .filter((row) => row !== null); // Remove as linhas que falharem
+    // Log para debug
+    console.log("Consulta status executada:", tabela);
 
-    res.json({ pedidosPorStatus: formattedData });
+    // Retorne os dados com a chave 'tabela'
+    res.json({ tabela });
+  } catch (error) {
+    console.error("Erro na consulta SQL:", error);
+    res.status(500).json({ error: "Erro ao acessar o banco de dados." });
+  }
+}
+
+
+export async function pedidosDoDia(req, res) {
+  try {
+    // Consulta para contar os pedidos feitos hoje
+    const tabela = await database.query(
+      "SELECT COUNT(*) as total FROM pedido WHERE DATE(datahora) = CURRENT_DATE;"
+    );
+
+    // Envia o total de pedidos do dia
+    res.json({ totalPedidos: tabela[0].total });
+  } catch (error) {
+    console.error("Erro na consulta SQL:", error);
+    res.status(500).json({ error: "Erro ao acessar o banco de dados." });
+  }
+}
+
+export async function pedidosTotais(req, res) {
+  try {
+    // Consulta para contar todos os pedidos
+    const tabela = await database.query(
+      "SELECT COUNT(*) as total FROM pedido;"
+    );
+
+    // Envia o total de pedidos
+    res.json({ totalPedidos: tabela[0].total });
   } catch (error) {
     console.error("Erro na consulta SQL:", error);
     res.status(500).json({ error: "Erro ao acessar o banco de dados." });

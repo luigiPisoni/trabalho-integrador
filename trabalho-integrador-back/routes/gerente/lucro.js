@@ -7,7 +7,7 @@ const lucroRouter = express.Router();
 lucroRouter.get('/diario', async (req, res) => {
   try {
     const tabela = await database.query(
-      'SELECT datahora::timestamp::date as data, sum(valor) as total, sum(valor) * 0.3 as lucro from pedido group by data;'
+      'SELECT datahora::timestamp::date as data, SUM(valor) as total, SUM(valor) * 0.3 as lucro FROM pedido GROUP BY datahora::timestamp::date ORDER BY datahora::timestamp::date;'
     );
 
     // Processamento de dados com tratamento de erros
