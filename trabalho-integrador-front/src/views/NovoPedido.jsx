@@ -75,18 +75,13 @@ function NovoPedido() {
   useEffect(() => {
     getLista("prato");
   }, []);
-
-  // controla cada parte da criação de um novo pedido
   const handlePassos = async (acao) => {
-    // verifica se o clique do botão é válido para ir ou voltar de passo.
     let novoPasso = passo;
     if (acao === "next") {
       if (passo < 3) {
         novoPasso = passo + 1;
         setPasso(novoPasso);
       } else if (passo === 3) {
-        // aqui envia um novo pedido pro back
-
         if (carrinho.length <= 0 || valorTotal < 0) {
           toast("Sem itens no carrinho");
           return;
@@ -108,77 +103,53 @@ function NovoPedido() {
         setPasso(novoPasso);
       }
     }
-
-    // passo 1: listar os pratos
-    // é usado novoPasso pela assincronização no setPasso
     if (novoPasso === 1) {
-      // pega a lista de pratos do banco
       getLista("prato");
     }
-
     if (novoPasso === 2) {
-      // pega a lista de produtos do banco
       getLista("produto");
     }
   };
-
-  // item = {nome, valor, qnt}
   const adicionaCarrinho = (item) => {
-    // Cria um novo item para adicionar ao carrinho
     let novoItem = {
       nome: item.nome,
       valor: item.valor,
       qnt: item.qnt,
     };
-  
-    // Condiciona o tipo de produto ou prato
     if (item.codprt < 0) {
       novoItem.codpdt = item.codpdt;
     } else {
       novoItem.codprt = item.codprt;
     }
-  
-    // Verifica se o item já existe no carrinho
     const indexItemExistente = carrinho.findIndex(
       (produto) =>
         (produto.codpdt && produto.codpdt === item.codpdt) ||
         (produto.codprt && produto.codprt === item.codprt)
     );
-  
+
     if (indexItemExistente !== -1) {
-      // Se o item já existe, apenas atualiza a quantidade e o valor total
       let carrinhoAtualizado = [...carrinho];
       carrinhoAtualizado[indexItemExistente].qnt += item.qnt;
       setCarrinho(carrinhoAtualizado);
-  
-      // Atualiza o valor total
       setValorTotal(
         valorTotal + item.valor * item.qnt
       );
     } else {
-      // Se o item não existe, adiciona um novo item
       let carrinhoAtualizado = [...carrinho, novoItem];
       setCarrinho(carrinhoAtualizado);
-  
-      // Atualiza o valor total
       setValorTotal(
         valorTotal + item.valor * item.qnt
       );
     }
   };
-  
-
   const removeCarrinho = (item) => {
     let carrinhoAtualizado = [];
     let removedItem;
-
-    // cria uma nova lista sem o item removido e desconta o preço do valor total
     if (item.codprt) {
       carrinhoAtualizado = carrinho.filter(
         // i.codprt || null é pra não comparar
         (i) => (i.codprt || null) !== item.codprt
       );
-
       removedItem = carrinho.find((i) => i.codprt === item.codprt);
     } else {
       carrinhoAtualizado = carrinho.filter(
@@ -186,11 +157,9 @@ function NovoPedido() {
       );
       removedItem = carrinho.find((i) => i.codpdt === item.codpdt);
     }
-
     setCarrinho(carrinhoAtualizado);
     setValorTotal(valorTotal - removedItem.valor * removedItem.qnt);
   };
-
   return (
     <div>
       <Header />

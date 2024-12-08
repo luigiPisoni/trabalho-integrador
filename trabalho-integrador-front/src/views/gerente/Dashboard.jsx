@@ -14,13 +14,10 @@ import {
   BarElement,
   Title,
 } from "chart.js";
-
-
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
-
 function Dashboard() {
-  const [chartData, setChartData] = useState(null); // Dados do gráfico
-  const [isLoading, setIsLoading] = useState(true); // Estado de carregamento
+  const [chartData, setChartData] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
   const [totalPedidosDia, setTotalPedidosDia] = useState(0);
 
   useEffect(() => {
@@ -66,11 +63,10 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  const [chartPedidos, setChartPedidos] = useState(null); // Dados do gráfico
-  const [isLoadingP, setIsLoadingP] = useState(true); // Estado de carregamento
+  const [chartPedidos, setChartPedidos] = useState(null); 
+  const [isLoadingP, setIsLoadingP] = useState(true); 
 
   useEffect(() => {
-    // Buscar dados do backend
     const fetchPedido = async () => {
       try {
         const response = await server.get('/pedido/status');
@@ -83,30 +79,28 @@ function Dashboard() {
       label: 'Pedidos por Status',
       data: totalPedidos,
       backgroundColor: [
-        'rgba(76, 175, 80, 0.5)',  // Cor para 'entregue'
-        'rgba(255, 152, 0, 0.5)',   // Cor para 'pendente'
-        'rgba(33, 150, 243, 0.5)',  // Cor para outros status (caso necessário)
-        'rgba(244, 67, 54, 0.5)',   // Outra cor, por exemplo
-        'rgba(158, 158, 158, 0.5)', // Cor neutra, como 'cancelado'
+        'rgba(76, 175, 80, 0.5)',  
+        'rgba(255, 152, 0, 0.5)',   
+        'rgba(33, 150, 243, 0.5)', 
+        'rgba(244, 67, 54, 0.5)',   
+        'rgba(158, 158, 158, 0.5)', 
       ],
       borderColor: [
-        'rgba(76, 175, 80, 1)',  // Cor para 'entregue'
-        'rgba(255, 152, 0, 1)',   // Cor para 'pendente'
-        'rgba(33, 150, 243, 1)',  // Cor para outros status (caso necessário)
-        'rgba(244, 67, 54, 1)',   // Outra cor, por exemplo
-        'rgba(158, 158, 158, 1)', // Cor neutra, como 'cancelado'
+        'rgba(76, 175, 80, 1)',  
+        'rgba(255, 152, 0, 1)',   
+        'rgba(33, 150, 243, 1)',  
+        'rgba(244, 67, 54, 1)',   
+        'rgba(158, 158, 158, 1)', 
       ],
       borderWidth: 1,
-      // A propriedade 'fill' é usada para gráficos de linha, mas para barra não precisa
       fill: false,
     },
   ],
 });
-  
-        setIsLoadingP(false); // Atualiza o estado para mostrar o gráfico
+        setIsLoadingP(false);
       } catch (error) {
         console.error('Erro ao buscar os dados do gráfico:', error.message);
-        setIsLoadingP(false); // Atualiza o estado mesmo se ocorrer um erro
+        setIsLoadingP(false);
       }
     };
   
@@ -115,33 +109,28 @@ function Dashboard() {
   
   const fetchPedidosDia = async () => {
     try {
-      const response = await server.get('/pedido/dia');  // Novo endpoint para pedidos do dia
-      const totalPedidosDia = response.data.totalPedidos;  // O total de pedidos retornado do backend
-      console.log('Total de pedidos do dia:', totalPedidosDia);
-      setTotalPedidosDia(totalPedidosDia);  // Atualiza o estado para mostrar o contador
+      const response = await server.get('/pedido/dia');  
+      const totalPedidosDia = response.data.totalPedidos;  
+      setTotalPedidosDia(totalPedidosDia); 
 
     } catch (error) {
       console.log("Erro ao buscar os pedidos do dia:", error.message);
     }
   };
-
-  // Chama a função ao carregar o componente
   useEffect(() => {
     fetchPedidosDia();
   }, []);
   const [totalPedidosTotais, setTotalPedidosTotais] = useState(0);
   const fetchPedidosTotais = async () => {
     try {
-      const response = await server.get('/pedido/totais');  // Novo endpoint para pedidos totais
-      const totalPedidosTotais = response.data.totalPedidos;  // O total de pedidos retornado do backend
-      console.log('Total de pedidos totais:', totalPedidosTotais);
-      setTotalPedidosTotais(totalPedidosTotais);  // Atualiza o estado para mostrar o contador
+      const response = await server.get('/pedido/totais');  
+      const totalPedidosTotais = response.data.totalPedidos;  
+      setTotalPedidosTotais(totalPedidosTotais);  
     } catch (error) {
       console.log("Erro ao buscar os pedidos totais:", error.message);
     }
   };
 
-  // Chama a função ao carregar o componente
   useEffect(() => {
     fetchPedidosTotais();
   }, []);
@@ -151,7 +140,6 @@ function Dashboard() {
     try {
       const response = await server.get('/pessoa/totalClientes');
       const totalClientesRegistrados = response.data.totalClientes;
-      console.log('Total de clientes registrados:', totalClientesRegistrados);
       setTotalClientesRegistrados(totalClientesRegistrados);
     } catch (error) {
       console.log("Erro ao buscar os clientes registrados:", error.message);
