@@ -1,5 +1,4 @@
 import { database } from "../db/banco.js";
-
 export async function novo(req, res) {
   try {
     let {
@@ -52,37 +51,53 @@ export async function novo(req, res) {
     res.status(400).json({ mensagem: "Erro ao criar o pedido!" });
   }
 }
-
 export async function lista(req, res) {
   try {
     const pedidos = await database.any(
       "SELECT codigo, cpf, valor, datahora, descricao, status, tipo_pagamento FROM pedido;"
     );
+
+    // Verifica se pedidos foram encontrados
+    if (!pedidos || pedidos.length === 0) {
+      return res.status(404).json({ mensagem: "Nenhum pedido encontrado." });
+    }
+
     for (const pedido of pedidos) {
-      const pessoa = await database.one(
-        "SELECT cpf, nome, endereco, cargo FROM pessoa WHERE cpf = $1;",
-        [pedido.cpf]
-      );
-      pedido.pessoa = pessoa;
-      delete pedido.cpf;
+      try {
+        // Buscando a pessoa associada ao pedido
+        const pessoa = await database.one(
+          "SELECT cpf, nome, endereco, cargo FROM pessoa WHERE cpf = $1;",
+          [pedido.cpf]
+        );
+        pedido.pessoa = pessoa;
+        delete pedido.cpf;
 
-      const produtos = await database.any(
-        "SELECT produto_codigo, quantidade, nome, valor FROM pedido_produto JOIN produto ON produto.codpdt = pedido_produto.produto_codigo WHERE pedido_codigo = $1;",
-        [pedido.codigo]
-      );
+        // Buscando os produtos associados ao pedido
+        const produtos = await database.any(
+          "SELECT produto_codigo, quantidade, nome, valor FROM pedido_produto JOIN produto ON produto.codpdt = pedido_produto.produto_codigo WHERE pedido_codigo = $1;",
+          [pedido.codigo]
+        );
 
-      const pratos = await database.any(
-        "SELECT prato_codigo, quantidade, nome, valor FROM pedido_prato JOIN prato ON prato.codprt = pedido_prato.prato_codigo WHERE pedido_codigo = $1;",
-        [pedido.codigo]
-      );
+        // Buscando os pratos associados ao pedido
+        const pratos = await database.any(
+          "SELECT prato_codigo, quantidade, nome, valor FROM pedido_prato JOIN prato ON prato.codprt = pedido_prato.prato_codigo WHERE pedido_codigo = $1;",
+          [pedido.codigo]
+        );
 
-      pedido.produtos = produtos;
-      pedido.pratos = pratos;
+        pedido.produtos = produtos;
+        pedido.pratos = pratos;
+
+      } catch (innerError) {
+        console.error(`Erro ao processar pedido ${pedido.codigo}:`, innerError);
+        // A cada erro de pedido, o sistema deve continuar a busca para os outros pedidos
+        pedido.error = "Erro ao processar dados relacionados ao pedido";
+      }
     }
 
     res.status(200).json(pedidos);
+
   } catch (error) {
-    console.error("mensagem: ", error);
+    console.error("Erro ao buscar os pedidos:", error);
     res.status(400).json({ mensagem: "Erro ao buscar os pedidos!" });
   }
 }
@@ -110,7 +125,6 @@ export async function deletar(req, res) {
       .json({ mensagem: "Erro no servidor ao tentar deletar o pedido." });
   }
 }
-
 export async function atualizar(req, res) {
   const { codigo } = req.params;
 
@@ -178,7 +192,6 @@ export async function add_produto(req, res) {
       .json({ mensagem: "Erro no servidor ao tentar adicionar produtos" });
   }
 }
-
 export async function remove_produto(req, res) {
   const { cod } = req.params;
   const { produtos } = req.body;
@@ -354,8 +367,6 @@ export async function status(req, res) {
     res.status(500).json({ error: "Erro ao acessar o banco de dados." });
   }
 }
-
-
 export async function pedidosDoDia(req, res) {
   try {
     // Consulta para contar os pedidos feitos hoje
@@ -370,7 +381,6 @@ export async function pedidosDoDia(req, res) {
     res.status(500).json({ error: "Erro ao acessar o banco de dados." });
   }
 }
-
 export async function pedidosTotais(req, res) {
   try {
     // Consulta para contar todos os pedidos

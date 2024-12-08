@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Login from "./views/Login";
 import Destaques from "./views/Destaques";
 import NovoPedido from "./views/NovoPedido";
-
+import ListarPedidos from "./views/gerente/ListarPedidos";
 import Dashboard from "./views/gerente/Dashboard";
 import Controle from "./views/gerente/Controle";
 
@@ -27,6 +27,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/controle" element={<Controle />} />
+          <Route path="/listar-pedidos" element={<ListarPedidos />} />
         </Routes>
       </BrowserRouter>
     </div>

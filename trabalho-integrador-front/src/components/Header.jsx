@@ -35,8 +35,8 @@ function Header() {
           <a href="/controle" className="hover:font-semibold transition-all">
             Controle
           </a>
-          <a href="/listarPedidos" className="hover:font-semibold transition-all">
-            Listar Pedidos
+          <a href="/listar-pedidos" className="hover:font-semibold transition-all">
+            Pedidos
           </a>
         </div>
       )}
