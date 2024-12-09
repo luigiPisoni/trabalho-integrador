@@ -107,9 +107,7 @@ function ListarPedidos() {
                         >
                           <option value="preparando">Preparando</option>
                           <option value="pendente">Pendente</option>
-                          <option value="saiu_entrega">
-                            Saiu para entrega
-                          </option>
+                          <option value="saiu_entrega">Entregando</option>
                           <option value="entregue">Entregue</option>
                           <option value="cancelado">Cancelado</option>
                         </select>

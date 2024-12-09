@@ -80,7 +80,7 @@ export async function lista(req, res) {
         pedido.pratos = pratos;
       } catch (innerError) {
         console.error(`Erro ao processar pedido ${pedido.codigo}:`, innerError);
- pedido.error = "Erro ao processar dados relacionados ao pedido";
+        pedido.error = "Erro ao processar dados relacionados ao pedido";
       }
     }
 
