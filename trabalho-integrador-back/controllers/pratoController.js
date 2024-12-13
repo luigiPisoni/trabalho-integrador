@@ -102,10 +102,22 @@ export async function novo(req, res) {
       .json({ mensagem: "É necessário informar ao menos um ingrediente" });
   }
 
+  // serve pra retirar os elementos inválidos da array de ingredientes
+  for (const ingrediente of ingredientes) {
+    if (
+      !("nome" in ingrediente) ||
+      !("unidade" in ingrediente) ||
+      !("quantidade" in ingrediente)
+    ) {
+      const i = ingredientes.indexOf(ingrediente);
+      ingredientes.splice(i, 1);
+    }
+  }
+
   try {
-    // Inicia uma transação
+    // inicia uma transação
     await database.tx(async (tx) => {
-      // Insere o prato e obtém o ID gerado
+      // insere o prato e obtém o ID gerado
       const criarPrato = await tx.one(
         "INSERT INTO prato (nome, valor) VALUES ($1, $2) RETURNING *;",
         [nome, valor]

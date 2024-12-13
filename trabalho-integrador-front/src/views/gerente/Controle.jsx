@@ -39,18 +39,6 @@ function Controle() {
     try {
       const tabela = pagina === "pratos" ? "prato" : "produto";
 
-      for (const ingrediente of item.ingredientes) {
-        // caso não possuir nome, unidade ou quantidade, não vai pro back
-        if (
-          !("nome" in ingrediente) ||
-          !("unidade" in ingrediente) ||
-          !("quantidade" in ingrediente)
-        ) {
-          const i = item.ingredientes.indexOf(ingrediente);
-          item.ingredientes.splice(i, 1);
-        }
-      }
-
       let response;
       if (action === "novo") {
         response = await server.post(`/${tabela}/novo`, item);
